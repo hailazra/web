@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noctis - Roblox Script Hub</title>
+    <title>Noctis</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
@@ -62,12 +62,19 @@
             background: rgba(0, 240, 255, 0.3);
         }
 
+        a, button, .executor-item {
+            cursor: none !important;
+        }
+
         @media (hover: none) and (pointer: coarse) {
             .cursor, .cursor-follower {
                 display: none;
             }
             body {
                 cursor: auto;
+            }
+            a, button, .executor-item {
+                cursor: pointer !important;
             }
         }
 
@@ -104,47 +111,13 @@
             z-index: 2;
         }
 
-        /* Running Header */
-        .executor-banner {
-            background: rgba(138, 43, 226, 0.1);
-            border-bottom: 1px solid rgba(138, 43, 226, 0.3);
-            overflow: hidden;
-            padding: 12px 0;
-            position: relative;
-        }
-
-        .executor-track {
-            display: flex;
-            animation: scroll 30s linear infinite;
-            white-space: nowrap;
-        }
-
-        .executor-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 0 40px;
-            color: var(--secondary);
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .executor-item i {
-            font-size: 16px;
-        }
-
-        @keyframes scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-
         /* Header Styles */
         header {
             background: rgba(10, 10, 20, 0.8);
             backdrop-filter: blur(10px);
             position: fixed;
             width: 100%;
-            top: 40px;
+            top: 0;
             z-index: 1000;
             border-bottom: 1px solid rgba(138, 43, 226, 0.3);
         }
@@ -194,6 +167,49 @@
 
         .nav-links a:hover {
             color: var(--secondary);
+        }
+
+        /* Running Header */
+        .executor-banner {
+            background: rgba(138, 43, 226, 0.1);
+            border-bottom: 1px solid rgba(138, 43, 226, 0.3);
+            overflow: hidden;
+            padding: 12px 0;
+            position: fixed;
+            width: 100%;
+            top: 69px;
+            z-index: 999;
+        }
+
+        .executor-track {
+            display: flex;
+            animation: scroll 30s linear infinite;
+            white-space: nowrap;
+        }
+
+        .executor-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 40px;
+            color: var(--secondary);
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .executor-item:hover {
+            color: var(--light);
+        }
+
+        .executor-item i {
+            font-size: 16px;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
 
         /* Hero Section */
@@ -254,7 +270,6 @@
             padding: 10px 20px;
             border-radius: 8px;
             font-weight: 600;
-            cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
@@ -308,15 +323,15 @@
             font-size: 24px;
         }
 
-        /* Features Section */
-        .features {
+        /* Use Noctis Section */
+        .use-noctis {
             padding: 100px 0;
         }
 
         .section-title {
             text-align: center;
             font-size: 3rem;
-            margin-bottom: 60px;
+            margin-bottom: 20px;
             background: linear-gradient(45deg, var(--secondary), var(--primary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -326,43 +341,61 @@
             font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
         }
 
+        .section-subtitle {
+            text-align: center;
+            color: var(--gray);
+            margin-bottom: 60px;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
         .feature-card {
             background: rgba(25, 25, 45, 0.6);
-            border: 1px solid rgba(138, 43, 226, 0.3);
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            border-radius: 15px;
+            padding: 35px;
+            transition: all 0.3s ease;
         }
 
         .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 0 30px rgba(138, 43, 226, 0.3);
-            border-color: rgba(0, 240, 255, 0.5);
+            transform: translateY(-5px);
+            border-color: rgba(0, 240, 255, 0.4);
+            box-shadow: 0 10px 30px rgba(138, 43, 226, 0.2);
+        }
+
+        .feature-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
         }
 
         .feature-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
+            font-size: 32px;
             color: var(--secondary);
-            text-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+            text-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
         }
 
         .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
+            font-size: 1.3rem;
             color: var(--light);
+            font-weight: 700;
         }
 
         .feature-card p {
             color: var(--gray);
-            line-height: 1.6;
+            line-height: 1.7;
+            font-size: 0.95rem;
         }
 
         /* Uptime Section */
@@ -456,13 +489,6 @@
             padding: 100px 0;
         }
 
-        .section-subtitle {
-            text-align: center;
-            color: var(--gray);
-            margin-bottom: 60px;
-            font-size: 1.1rem;
-        }
-
         .game-card {
             background: rgba(25, 25, 45, 0.8);
             border: 1px solid rgba(138, 43, 226, 0.3);
@@ -490,6 +516,19 @@
             font-size: 80px;
             color: var(--secondary);
             border-bottom: 1px solid rgba(138, 43, 226, 0.3);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .game-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .game-image i {
+            position: absolute;
         }
 
         .game-content {
@@ -612,11 +651,15 @@
             }
             
             .hero {
-                padding: 140px 0 80px;
+                padding: 180px 0 80px;
             }
 
             header {
-                top: 40px;
+                top: 0;
+            }
+
+            .executor-banner {
+                top: 69px;
             }
 
             .section-title {
@@ -633,6 +676,10 @@
             }
 
             .uptime-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -656,13 +703,6 @@
     <!-- Stars Background -->
     <div class="stars" id="stars"></div>
 
-    <!-- Executor Banner -->
-    <div class="executor-banner">
-        <div class="executor-track" id="executorTrack">
-            <!-- Will be populated by JavaScript -->
-        </div>
-    </div>
-
     <!-- Header -->
     <header>
         <div class="container">
@@ -683,11 +723,18 @@
         </div>
     </header>
 
+    <!-- Executor Banner -->
+    <div class="executor-banner">
+        <div class="executor-track" id="executorTrack">
+            <!-- Will be populated by JavaScript -->
+        </div>
+    </div>
+
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="container">
-            <h1 class="floating">Noctis Hub</h1>
-            <p>Your premium script hub for Roblox. Lightning-fast execution, undetectable, and constantly updated.</p>
+            <h1 class="floating">Noctis</h1>
+            <p>Built to Dominate.</p>
         </div>
     </section>
 
@@ -702,7 +749,7 @@
                 </button>
             </div>
             <div class="loadstring-code" id="loadstring">
-loadstring(game:HttpGet("https://raw.githubusercontent.com/NoctisHub/Scripts/main/FishIt.lua"))()
+loadstring(game:HttpGet("https://noctishub.lol/loader"))()
             </div>
         </div>
 
@@ -715,52 +762,65 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/NoctisHub/Scripts/mai
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="features" id="features">
+    <!-- Use Noctis Section -->
+    <section class="use-noctis" id="features">
         <div class="container">
-            <h2 class="section-title">Powerful Features</h2>
+            <h2 class="section-title">Use Noctis</h2>
+            <p class="section-subtitle">Experience the power of the most advanced Roblox script hub</p>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-bolt"></i>
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h3>Lightning Fast</h3>
                     </div>
-                    <h3>Lightning Fast</h3>
-                    <p>Execute scripts at incredible speeds with our optimized engine. No more lag or delays.</p>
+                    <p>Execute scripts instantly with our optimized engine. Zero lag, maximum performance.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Undetectable</h3>
                     </div>
-                    <h3>Undetectable</h3>
-                    <p>Advanced anti-detection technology keeps you safe from bans and security measures.</p>
+                    <p>Advanced anti-detection keeps you safe. Play without worrying about bans.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-sync-alt"></i>
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <h3>Auto Updates</h3>
                     </div>
-                    <h3>Auto Update</h3>
-                    <p>Stay ahead with automatic updates that bring new features and improvements instantly.</p>
+                    <p>Always up-to-date with automatic updates. New features delivered instantly.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-users"></i>
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-key"></i>
+                        </div>
+                        <h3>Keyless</h3>
                     </div>
-                    <h3>Community Driven</h3>
-                    <p>Join thousands of users sharing scripts, tips, and support in our active community.</p>
+                    <p>No annoying key systems. Just load and play. Simple and straightforward.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-cogs"></i>
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h3>Easy to Use</h3>
                     </div>
-                    <h3>Customizable UI</h3>
-                    <p>Personalize your experience with themes, layouts, and settings that match your style.</p>
+                    <p>Intuitive interface designed for everyone. From beginners to pros.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-database"></i>
+                    <div class="feature-header">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Active Community</h3>
                     </div>
-                    <h3>Script Library</h3>
-                    <p>Access hundreds of premium scripts for popular Roblox games, all in one place.</p>
+                    <p>Join thousands of users. Share scripts, get support, make friends.</p>
                 </div>
             </div>
         </div>
@@ -800,23 +860,24 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/NoctisHub/Scripts/mai
             
             <div class="game-card">
                 <div class="game-image">
-                    <i class="fas fa-fish"></i>
+                    <img src="assets/games/fishit.webp" alt="Fisch Game" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <i class="fas fa-fish" style="display: none;"></i>
                 </div>
                 <div class="game-content">
                     <div class="game-header">
-                        <h3 class="game-title">Fisch</h3>
-                        <span class="game-badge">Premium</span>
+                        <h3 class="game-title">Fish It</h3>
+                        <span class="game-badge">Keyless</span>
                     </div>
                     <p class="game-description">
-                        Dominate the fishing world with our advanced Fisch script. Auto farm, instant catch, and much more to maximize your efficiency.
+                        Dominate the fishing world with our advanced Fish It script. Auto fishing, instant catch, and much more to maximize your efficiency.
                     </p>
                     <ul class="features-list">
-                        <li><i class="fas fa-check-circle"></i> Auto Cast & Instant Reel</li>
-                        <li><i class="fas fa-check-circle"></i> Fastest Auto Shake System</li>
-                        <li><i class="fas fa-check-circle"></i> Auto Farm All Events</li>
-                        <li><i class="fas fa-check-circle"></i> ESP & Teleportation</li>
-                        <li><i class="fas fa-check-circle"></i> Auto Sell & Collect</li>
-                        <li><i class="fas fa-check-circle"></i> Custom UI with Themes</li>
+                        <li><i class="fas fa-check-circle"></i> Auto Fishing</li>
+                        <li><i class="fas fa-check-circle"></i> Instant Fishing</li>
+                        <li><i class="fas fa-check-circle"></i> Auto Teleport Events</li>
+                        <li><i class="fas fa-check-circle"></i> ESP</li>
+                        <li><i class="fas fa-check-circle"></i> Auto Sell</li>
+                        <li><i class="fas fa-check-circle"></i> And More</li>
                     </ul>
                     <a href="#discord" class="get-script-btn">Get Script</a>
                 </div>
@@ -828,11 +889,11 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/NoctisHub/Scripts/mai
     <footer>
         <div class="container">
             <div class="footer-content">
-                <h3>Noctis Hub</h3>
-                <p>The most advanced Roblox script hub designed for serious players. Join thousands of users and experience the future of scripting.</p>
+                <h3>Noctis</h3>
+                <p>The most advanced Roblox script hub designed for serious players.</p>
             </div>
             <div class="copyright">
-                <p>&copy; 2024 Noctis Script Hub. All rights reserved. For educational purposes only.</p>
+                <p>&copy; 2025 Noctis Script Hub. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -886,10 +947,21 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/NoctisHub/Scripts/mai
         }
         createStars();
 
-        // Executor Banner
+        // Executor Banner with Links
         const executors = [
-            'Wave', 'Fluxus', 'Arceus X', 'Delta', 'Hydrogen', 'Volcano',
-            'Zenith', 'Swift', 'Codex', 'KRNL', 'Ronix', 'Krampus'
+            { name: 'Delta', url: 'https://deltaexploits.gg/' },
+            { name: 'Ronix', url: 'https://ronixstudios.com/#/' },
+            { name: 'KRNL', url: 'https://krnl.cat/' },
+            { name: 'Wave', url: 'https://getwave.gg/' },
+            { name: 'Zenith', url: 'https://zenith.win/' },
+            { name: 'Volcano', url: 'https://volcano.wtf/' },
+            { name: 'Swift', url: 'https://getswift.gg/' },
+            { name: 'Fluxus', url: '#' },
+            { name: 'Arceus X', url: '#' },
+            { name: 'Hydrogen', url: '#' },
+            { name: 'Codex', url: '#' },
+            { name: 'Potassium', url: '#' },
+            { name: 'Velocity', url: '#' }
         ];
 
         function createExecutorBanner() {
@@ -897,9 +969,11 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/NoctisHub/Scripts/mai
             const items = executors.concat(executors);
             
             items.forEach(executor => {
-                const item = document.createElement('div');
+                const item = document.createElement('a');
                 item.className = 'executor-item';
-                item.innerHTML = `<i class="fas fa-check-circle"></i> ${executor}`;
+                item.href = executor.url;
+                item.target = '_blank';
+                item.innerHTML = `<i class="fas fa-check-circle"></i> ${executor.name}`;
                 track.appendChild(item);
             });
         }
