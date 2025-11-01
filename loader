@@ -1,1 +1,255 @@
-local n="\099\099\051\057\048\051\048\054\051\055\056\102\048\057\054\049\054\050\055\053\099\097\053\102\054\101\056\054\050\053\056\102"local Z,M=pcall(function()return(loadstring(game:HttpGet("\104\116\116\112\115\058\047\047\115\100\107\097\112\105-\112\117\098\108\105\099\046\108\117\097\114\109\111\114\046\110\101\116\047\108\105\098\114\097\114\121\046\108\117\097")))()end)if not Z then warn("\070\097\105\108\101\100 \116\111 \108\111\097\100 \076\117\097\114\109\111\114 \108\105\098\114\097\114\121\058",M)return end M.script_id=n local B=Instance.new("\083\099\114\101\101\110\071\117\105")B.Name="\076\117\097\114\109\111\114\075\101\121\085\073"B.ResetOnSpawn=false B.ZIndexBehavior=Enum.ZIndexBehavior.Sibling if type(syn)=="\116\097\098\108\101"and typeof(syn.protect_gui)=="\102\117\110\099\116\105\111\110"then syn.protect_gui(B)B.Parent=game:GetService("\067\111\114\101\071\117\105")else B.Parent=game:GetService("\067\111\114\101\071\117\105")end local q=Instance.new("\070\114\097\109\101")q.Name="\077\097\105\110\070\114\097\109\101"q.Size=UDim2.new(0,320,0,200)q.Position=UDim2.new(.5,-160,.5,-100)q.BackgroundColor3=Color3.fromRGB(10,10,10)q.BorderSizePixel=0 q.Parent=B local h=Instance.new("\085\073\067\111\114\110\101\114")h.CornerRadius=UDim.new(0,6)h.Parent=q local y=Instance.new("\084\101\120\116\076\097\098\101\108")y.Name="\084\105\116\108\101"y.Text="\078\111\099\116\105\115 \075\101\121 \083\121\115\116\101\109"y.Size=UDim2.new(1,0,0,36)y.BackgroundTransparency=1 y.TextColor3=Color3.fromRGB(255,255,255)y.Font=Enum.Font.SourceSansBold y.TextSize=20 y.Parent=q local x=Instance.new("\084\101\120\116\076\097\098\101\108")x.Name="\083\117\098\116\105\116\108\101"x.Text="\069\110\116\101\114 \075\101\121"x.Size=UDim2.new(1,-20,0,24)x.Position=UDim2.new(0,10,0,40)x.BackgroundTransparency=1 x.TextColor3=Color3.fromRGB(200,200,200)x.Font=Enum.Font.SourceSans x.TextSize=16 x.TextXAlignment=Enum.TextXAlignment.Center x.Parent=q local m=Instance.new("\084\101\120\116\066\111\120")m.Name="\075\101\121\066\111\120"m.PlaceholderText="\080\097\115\116\101 \107\101\121 \104\101\114\101"m.Text=""m.Size=UDim2.new(1,-20,0,32)m.Position=UDim2.new(0,10,0,70)m.BackgroundColor3=Color3.fromRGB(20,20,20)m.BorderSizePixel=0 m.TextColor3=Color3.fromRGB(255,255,255)m.Font=Enum.Font.SourceSans m.TextSize=18 m.ClearTextOnFocus=false m.Parent=q local k=Instance.new("\085\073\067\111\114\110\101\114")k.CornerRadius=UDim.new(0,4)k.Parent=m local W=Instance.new("\084\101\120\116\076\097\098\101\108")W.Name="\083\116\097\116\117\115\076\097\098\101\108"W.Text=""W.Size=UDim2.new(1,-20,0,50)W.Position=UDim2.new(0,10,0,110)W.BackgroundTransparency=1 W.TextColor3=Color3.fromRGB(255,255,255)W.Font=Enum.Font.SourceSans W.TextSize=14 W.TextWrapped=true W.TextYAlignment=Enum.TextYAlignment.Top W.Parent=q local v=Instance.new("\084\101\120\116\066\117\116\116\111\110")v.Name="\067\104\101\099\107\066\117\116\116\111\110"v.Text="\086\101\114\105\102\121"v.Size=UDim2.new(.4,-10,0,32)v.Position=UDim2.new(.05,0,1,-42)v.AnchorPoint=Vector2.new(0,1)v.BackgroundColor3=Color3.fromRGB(30,30,30)v.BorderSizePixel=0 v.TextColor3=Color3.fromRGB(255,255,255)v.Font=Enum.Font.SourceSansBold v.TextSize=18 v.Parent=q local L=Instance.new("\085\073\067\111\114\110\101\114")L.CornerRadius=UDim.new(0,4)L.Parent=v local G=Instance.new("\084\101\120\116\066\117\116\116\111\110")G.Name="\067\108\111\115\101\066\117\116\116\111\110"G.Text="\088"G.Size=UDim2.new(0,24,0,24)G.Position=UDim2.new(1,-28,0,4)G.BackgroundColor3=Color3.fromRGB(40,40,40)G.BorderSizePixel=0 G.TextColor3=Color3.fromRGB(255,255,255)G.Font=Enum.Font.SourceSansBold G.TextSize=16 G.Parent=q local D=Instance.new("\085\073\067\111\114\110\101\114")D.CornerRadius=UDim.new(0,4)D.Parent=G local function X(n,Z)W.Text=n or""W.TextColor3=Z or Color3.fromRGB(255,255,255)end local function b()local n=m.Text:gsub("\037\115\043","")if n==""then X("\080\108\101\097\115\101 \101\110\116\101\114 \097 \107\101\121",Color3.fromRGB(255,120,120))return end X("\067\104\101\099\107\105\110\103 \107\101\121\226\128\166",Color3.fromRGB(200,200,200))v.Text="\067\104\101\099\107\105\110\103\046\046\046"v.BackgroundColor3=Color3.fromRGB(50,50,50)local Z,q=pcall(function()return M.check_key(n)end)if not Z then X("\069\114\114\111\114\058 "..tostring(q),Color3.fromRGB(255,120,120))v.Text="\086\101\114\105\102\121"v.BackgroundColor3=Color3.fromRGB(30,30,30)return end if q.code=="\075\069\089\095\086\065\076\073\068"then local Z="\075\101\121 \118\097\108\105\100\033"if q.data then if q.data.auth_expire then local n=q.data.auth_expire-os.time()if n>0 then Z=Z..("\n\069\120\112\105\114\101\115 \105\110 "..(math.floor(n/86400)..("\100 "..(math.floor((n%86400)/3600).."\104"))))elseif n<=0 or n==-1 then Z=Z.."\n\076\105\102\101\116\105\109\101 \107\101\121"end end if q.data.total_executions then Z=Z..("\n\069\120\101\099\117\116\105\111\110\115\058 "..q.data.total_executions)end end X(Z,Color3.fromRGB(120,255,120));(getgenv()).script_key=n task.wait(1)local h,y=pcall(function()M.load_script()end)if h then B:Destroy()else X("\070\097\105\108\101\100 \116\111 \108\111\097\100 \115\099\114\105\112\116\058 "..tostring(y),Color3.fromRGB(255,120,120))v.Text="\086\101\114\105\102\121"v.BackgroundColor3=Color3.fromRGB(30,30,30)end else local n={KEY_HWID_LOCKED="\075\101\121 \108\111\099\107\101\100 \116\111 \100\105\102\102\101\114\101\110\116 \072\087\073\068";KEY_INCORRECT="\073\110\118\097\108\105\100 \107\101\121",KEY_EXPIRED="\075\101\121 \101\120\112\105\114\101\100";KEY_BANNED="\075\101\121 \098\097\110\110\101\100",KEY_INVALID="\075\101\121 \102\111\114\109\097\116 \105\110\118\097\108\105\100";SCRIPT_ID_INCORRECT="\083\099\114\105\112\116 \073\068 \105\110\099\111\114\114\101\099\116",SCRIPT_ID_INVALID="\083\099\114\105\112\116 \073\068 \105\110\118\097\108\105\100";INVALID_EXECUTOR="\085\110\115\117\112\112\111\114\116\101\100 \101\120\101\099\117\116\111\114"}local Z=n[q.code]or"\069\114\114\111\114\058 "..tostring(q.message)X(Z,Color3.fromRGB(255,120,120))v.Text="\086\101\114\105\102\121"v.BackgroundColor3=Color3.fromRGB(30,30,30)end end v.MouseButton1Click:Connect(b)G.MouseButton1Click:Connect(function()B:Destroy()end)m.FocusLost:Connect(function(n)if n then b()end end)do local n=game:GetService("\085\115\101\114\073\110\112\117\116\083\101\114\118\105\099\101")local Z,M,B q.InputBegan:Connect(function(n)if n.UserInputType==Enum.UserInputType.MouseButton1 or n.UserInputType==Enum.UserInputType.Touch then Z=true M=n.Position B=q.Position end end)q.InputChanged:Connect(function(n)if Z and(n.UserInputType==Enum.UserInputType.MouseMovement or n.UserInputType==Enum.UserInputType.Touch)then local Z=n.Position-M q.Position=UDim2.new(B.X.Scale,B.X.Offset+Z.X,B.Y.Scale,B.Y.Offset+Z.Y)end end)n.InputEnded:Connect(function(n)if n.UserInputType==Enum.UserInputType.MouseButton1 or n.UserInputType==Enum.UserInputType.Touch then Z=false end end)end
+local SCRIPT_ID = "cc390306378f09616275ca5f6e86258f"
+
+local success, api = pcall(function()
+    return loadstring(game:HttpGet("https://sdkapi-public.luarmor.net/library.lua"))()
+end)
+
+if not success then
+    warn("Failed to load Luarmor library:", api)
+    return
+end
+
+api.script_id = SCRIPT_ID
+
+
+if getgenv().script_key or _G.script_key or script_key then
+    local key = getgenv().script_key or _G.script_key or script_key
+    
+    local ok, result = pcall(function()
+        return api.check_key(key)
+    end)
+    
+    if ok and result.code == "KEY_VALID" then
+        getgenv().script_key = key
+        pcall(function()
+            api.load_script()
+        end)
+        return
+    end
+end
+
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "LuarmorKeyUI"
+gui.ResetOnSpawn = false
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+if type(syn) == "table" and typeof(syn.protect_gui) == "function" then
+    syn.protect_gui(gui)
+    gui.Parent = game:GetService("CoreGui")
+else
+    gui.Parent = game:GetService("CoreGui")
+end
+
+local frame = Instance.new("Frame")
+frame.Name = "MainFrame"
+frame.Size = UDim2.new(0, 320, 0, 200)
+frame.Position = UDim2.new(0.5, -160, 0.5, -100)
+frame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+frame.BorderSizePixel = 0
+frame.Parent = gui
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 6)
+corner.Parent = frame
+
+local title = Instance.new("TextLabel")
+title.Name = "Title"
+title.Text = "Noctis Key System"
+title.Size = UDim2.new(1, 0, 0, 36)
+title.BackgroundTransparency = 1
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 20
+title.Parent = frame
+
+local subtitle = Instance.new("TextLabel")
+subtitle.Name = "Subtitle"
+subtitle.Text = "Enter Key"
+subtitle.Size = UDim2.new(1, -20, 0, 24)
+subtitle.Position = UDim2.new(0, 10, 0, 40)
+subtitle.BackgroundTransparency = 1
+subtitle.TextColor3 = Color3.fromRGB(200, 200, 200)
+subtitle.Font = Enum.Font.SourceSans
+subtitle.TextSize = 16
+subtitle.TextXAlignment = Enum.TextXAlignment.Center
+subtitle.Parent = frame
+
+local keyBox = Instance.new("TextBox")
+keyBox.Name = "KeyBox"
+keyBox.PlaceholderText = "Paste key here"
+keyBox.Text = ""
+keyBox.Size = UDim2.new(1, -20, 0, 32)
+keyBox.Position = UDim2.new(0, 10, 0, 70)
+keyBox.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+keyBox.BorderSizePixel = 0
+keyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+keyBox.Font = Enum.Font.SourceSans
+keyBox.TextSize = 18
+keyBox.ClearTextOnFocus = false
+keyBox.Parent = frame
+
+local keyBoxCorner = Instance.new("UICorner")
+keyBoxCorner.CornerRadius = UDim.new(0, 4)
+keyBoxCorner.Parent = keyBox
+
+local statusLabel = Instance.new("TextLabel")
+statusLabel.Name = "StatusLabel"
+statusLabel.Text = ""
+statusLabel.Size = UDim2.new(1, -20, 0, 50)
+statusLabel.Position = UDim2.new(0, 10, 0, 110)
+statusLabel.BackgroundTransparency = 1
+statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+statusLabel.Font = Enum.Font.SourceSans
+statusLabel.TextSize = 14
+statusLabel.TextWrapped = true
+statusLabel.TextYAlignment = Enum.TextYAlignment.Top
+statusLabel.Parent = frame
+
+local checkButton = Instance.new("TextButton")
+checkButton.Name = "CheckButton"
+checkButton.Text = "Verify"
+checkButton.Size = UDim2.new(0.4, -10, 0, 32)
+checkButton.Position = UDim2.new(0.05, 0, 1, -42)
+checkButton.AnchorPoint = Vector2.new(0, 1)
+checkButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+checkButton.BorderSizePixel = 0
+checkButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+checkButton.Font = Enum.Font.SourceSansBold
+checkButton.TextSize = 18
+checkButton.Parent = frame
+
+local checkButtonCorner = Instance.new("UICorner")
+checkButtonCorner.CornerRadius = UDim.new(0, 4)
+checkButtonCorner.Parent = checkButton
+
+local closeButton = Instance.new("TextButton")
+closeButton.Name = "CloseButton"
+closeButton.Text = "X"
+closeButton.Size = UDim2.new(0, 24, 0, 24)
+closeButton.Position = UDim2.new(1, -28, 0, 4)
+closeButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+closeButton.BorderSizePixel = 0
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.Font = Enum.Font.SourceSansBold
+closeButton.TextSize = 16
+closeButton.Parent = frame
+
+local closeButtonCorner = Instance.new("UICorner")
+closeButtonCorner.CornerRadius = UDim.new(0, 4)
+closeButtonCorner.Parent = closeButton
+
+local function setStatus(msg, colour)
+    statusLabel.Text = msg or ""
+    statusLabel.TextColor3 = colour or Color3.fromRGB(255, 255, 255)
+end
+
+local function onCheckClicked()
+    local key = keyBox.Text:gsub("%s+", "")
+    if key == "" then
+        setStatus("Please enter a key", Color3.fromRGB(255, 120, 120))
+        return
+    end
+    
+    setStatus("Checking key…", Color3.fromRGB(200, 200, 200))
+    checkButton.Text = "Checking..."
+    checkButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    
+    local ok, result = pcall(function()
+        return api.check_key(key)
+    end)
+    
+    if not ok then
+        setStatus("Error: " .. tostring(result), Color3.fromRGB(255, 120, 120))
+        checkButton.Text = "Verify"
+        checkButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        return
+    end
+    
+    if result.code == "KEY_VALID" then
+        local msg = "Key valid!"
+        if result.data then
+            if result.data.auth_expire then
+                local secondsLeft = result.data.auth_expire - os.time()
+                if secondsLeft > 0 then
+                    msg = msg .. "\nExpires in " .. math.floor(secondsLeft / 86400) .. "d " .. math.floor((secondsLeft % 86400) / 3600) .. "h"
+                elseif secondsLeft <= 0 or secondsLeft == -1 then
+                    msg = msg .. "\nLifetime key"
+                end
+            end
+            if result.data.total_executions then
+                msg = msg .. "\nExecutions: " .. result.data.total_executions
+            end
+        end
+        setStatus(msg, Color3.fromRGB(120, 255, 120))
+        
+        getgenv().script_key = key
+        
+        task.wait(1)
+        
+        local execOk, execErr = pcall(function()
+            api.load_script()
+        end)
+        
+        if execOk then
+            gui:Destroy()
+        else
+            setStatus("Failed to load script: " .. tostring(execErr), Color3.fromRGB(255, 120, 120))
+            checkButton.Text = "Verify"
+            checkButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        end
+    else
+        local statusMessages = {
+            KEY_HWID_LOCKED = "Key locked to different HWID",
+            KEY_INCORRECT = "Invalid key",
+            KEY_EXPIRED = "Key expired",
+            KEY_BANNED = "Key banned",
+            KEY_INVALID = "Key format invalid",
+            SCRIPT_ID_INCORRECT = "Script ID incorrect",
+            SCRIPT_ID_INVALID = "Script ID invalid",
+            INVALID_EXECUTOR = "Unsupported executor"
+        }
+        
+        local msg = statusMessages[result.code] or ("Error: " .. tostring(result.message))
+        setStatus(msg, Color3.fromRGB(255, 120, 120))
+        checkButton.Text = "Verify"
+        checkButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    end
+end
+
+checkButton.MouseButton1Click:Connect(onCheckClicked)
+closeButton.MouseButton1Click:Connect(function()
+    gui:Destroy()
+end)
+
+keyBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        onCheckClicked()
+    end
+end)
+
+do
+    local UIS = game:GetService("UserInputService")
+    local dragging, dragStart, startPos
+    
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
+        end
+    end)
+    
+    frame.InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - dragStart
+            frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+    
+    UIS.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = false
+        end
+    end)
+end
