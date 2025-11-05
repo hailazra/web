@@ -1,713 +1,201 @@
-
-
-
-local GAME_CONFIGS = {
-    
-    [121864768012064] = {
-        name = "Fish It",
-        freemium_script_id = "ae6d8a7c30031f5a06d0c7693d4128a6",
-        premium_script_id = "b9f3d3060752efdd4e18b683325a3b75"
-    },
-}
-
-
-local Config = {
-    DiscordLink = "https://discord.gg/houseofnoctis",
-    LogoAssetId = "rbxassetid://123156553209294",
-    Title = "House of Noctis",
-    Description = "Welcome! Enter your key below.",
-    GetKeyButtons = {
-        {Name = "LootLabs", Link = "https://ads.luarmor.net/get_key?for=House_of_Noctis_Lootlabs-QCWkeOKymWMZ", Icon = ""},
-        {Name = "Linkvertise", Link = "https://ads.luarmor.net/get_key?for=House_of_Noctis_Linkvertise-NddozkMCmXIM", Icon = ""},
-        {Name = "Work.ink", Link = "https://ads.luarmor.net/get_key?for=House_of_Noctis_Work_Ink-mIdJQJPebuSd", Icon = ""}
-    }
-}
-
-
-
-
-local currentPlaceId = game.PlaceId
-local gameConfig = GAME_CONFIGS[currentPlaceId]
-
-if not gameConfig then
-    game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Unsupported Game";
-        Text = "PlaceId: " .. currentPlaceId .. " not supported.";
-        Icon = "rbxassetid://123156553209294";
-        Duration = 10;
-    })
-    warn("Game not supported. PlaceId:", currentPlaceId)
-    return
-end
-
-
-
-
-local success, api = pcall(function()
-    return loadstring(game:HttpGet("https://sdkapi-public.luarmor.net/library.lua"))()
-end)
-
-if not success then
-    warn("Failed to load Luarmor library:", api)
-    return
-end
-
-
-
-
-local function loadScriptByTier(tier)
-    local scriptId = tier == "premium" and gameConfig.premium_script_id or gameConfig.freemium_script_id
-    
-    api.script_id = scriptId
-    
-    local ok, err = pcall(function()
-        api.load_script()
-    end)
-    
-    if ok then
-        return true
-    else
-        warn("Failed to load script:", err)
-        return false, err
-    end
-end
-
-local function determineKeyTier(key)
-    
-    api.script_id = gameConfig.premium_script_id
-    local ok, result = pcall(function()
-        return api.check_key(key)
-    end)
-    
-    if ok and result.code == "KEY_VALID" then
-        return "premium", result
-    end
-    
-    
-    api.script_id = gameConfig.freemium_script_id
-    ok, result = pcall(function()
-        return api.check_key(key)
-    end)
-    
-    if ok and result.code == "KEY_VALID" then
-        return "freemium", result
-    end
-    
-    return nil, result
-end
-
-
-
-
-local keyFileName = "NoctisKey" .. currentPlaceId .. ".txt"
-
-local function checkSavedKey()
-    local savedKey = nil
-    
-    
-    if isfile and readfile then
-        local success, content = pcall(function()
-            return readfile(keyFileName)
-        end)
-        if success and content and content ~= "" then
-            savedKey = content:gsub("%s+", "")
-        end
-    end
-    
-    
-    if not savedKey then
-        savedKey = getgenv().script_key or _G.script_key
-    end
-    
-    if savedKey and savedKey ~= "" then
-        local tier, result = determineKeyTier(savedKey)
-        
-        if tier then
-            getgenv().script_key = savedKey
-            getgenv().key_tier = tier
-            
-            
-            if isfile and writefile then
-                pcall(function()
-                    writefile(keyFileName, savedKey)
-                end)
-            end
-            
-            game:GetService("StarterGui"):SetCore("SendNotification", {
-                Title = "Key Valid!";
-                Text = gameConfig.name .. " | " .. tier:upper();
-                Icon = "rbxassetid://123156553209294";
-                Duration = 3;
-            })
-            
-            loadScriptByTier(tier)
-            return true
-        else
-            
-            if isfile and delfile then
-                pcall(function()
-                    if isfile(keyFileName) then
-                        delfile(keyFileName)
-                    end
-                end)
-            end
-        end
-    end
-    
-    return false
-end
-
-if checkSavedKey() then
-    return
-end
-
-
-
-
-local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-
-local function GetGui()
-    local newGui = Instance.new("ScreenGui")
-    newGui.ScreenInsets = Enum.ScreenInsets.None
-    newGui.ResetOnSpawn = false
-    newGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    newGui.DisplayOrder = 2147483647
-    newGui.Parent = game:GetService("CoreGui")
-    return newGui
-end
-
-local function Tween(instance, tweeninfo, propertytable)
-    return TweenService:Create(instance, tweeninfo, propertytable)
-end
-
-local KeySystemUI = GetGui()
-
-local Base = Instance.new("Frame")
-Base.Name = "Base"
-Base.AnchorPoint = Vector2.new(0.5, 0.5)
-Base.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-Base.BackgroundTransparency = 0.1
-Base.BorderSizePixel = 0
-Base.Position = UDim2.fromScale(0.5, 0.5)
-Base.Size = UDim2.fromOffset(420, 360)
-Base.Parent = KeySystemUI
-
-local BaseUICorner = Instance.new("UICorner")
-BaseUICorner.CornerRadius = UDim.new(0, 10)
-BaseUICorner.Parent = Base
-
-local BaseUIStroke = Instance.new("UIStroke")
-BaseUIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-BaseUIStroke.Color = Color3.fromRGB(255, 255, 255)
-BaseUIStroke.Transparency = 0.9
-BaseUIStroke.Parent = Base
-
-
-local Topbar = Instance.new("Frame")
-Topbar.Name = "Topbar"
-Topbar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Topbar.BackgroundTransparency = 1
-Topbar.Size = UDim2.new(1, 0, 0, 50)
-Topbar.Parent = Base
-
-local TopbarDivider = Instance.new("Frame")
-TopbarDivider.AnchorPoint = Vector2.new(0, 1)
-TopbarDivider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-TopbarDivider.BackgroundTransparency = 0.9
-TopbarDivider.BorderSizePixel = 0
-TopbarDivider.Position = UDim2.fromScale(0, 1)
-TopbarDivider.Size = UDim2.new(1, 0, 0, 1)
-TopbarDivider.Parent = Topbar
-
-local TopbarPadding = Instance.new("UIPadding")
-TopbarPadding.PaddingLeft = UDim.new(0, 20)
-TopbarPadding.PaddingRight = UDim.new(0, 20)
-TopbarPadding.Parent = Topbar
-
-
-local Logo = Instance.new("ImageLabel")
-Logo.Name = "Logo"
-Logo.Image = Config.LogoAssetId
-Logo.BackgroundTransparency = 1
-Logo.AnchorPoint = Vector2.new(0, 0.5)
-Logo.Position = UDim2.fromScale(0, 0.5)
-Logo.Size = UDim2.fromOffset(32, 32)
-Logo.Parent = Topbar
-
-local LogoCorner = Instance.new("UICorner")
-LogoCorner.CornerRadius = UDim.new(0, 6)
-LogoCorner.Parent = Logo
-
-
-local Title = Instance.new("TextLabel")
-Title.Name = "Title"
-Title.FontFace = Font.new("rbxassetid://12187365364", Enum.FontWeight.SemiBold)
-Title.Text = Config.Title
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.TextSize = 16
-Title.TextTransparency = 0.1
-Title.TextXAlignment = Enum.TextXAlignment.Center
-Title.BackgroundTransparency = 1
-Title.AnchorPoint = Vector2.new(0, 0.5)
-Title.Position = UDim2.fromScale(0.04, 0.5)
-Title.Size = UDim2.new(1, -80, 0, 20)
-Title.Parent = Topbar
-
-local TitlePadding = Instance.new("UIPadding")
-TitlePadding.PaddingLeft = UDim.new(0, 45)
-TitlePadding.Parent = Title
-
-
-local CloseBtn = Instance.new("TextButton")
-CloseBtn.Name = "CloseBtn"
-CloseBtn.Text = "X"
-CloseBtn.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold)
-CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-CloseBtn.TextScaled = true
-CloseBtn.BackgroundTransparency = 1
-CloseBtn.AnchorPoint = Vector2.new(1, 0.5)
-CloseBtn.Position = UDim2.new(1, 0, 0.5, 0)
-CloseBtn.Size = UDim2.fromOffset(15, 15)
-CloseBtn.Parent = Topbar
-
-
-local Content = Instance.new("Frame")
-Content.Name = "Content"
-Content.BackgroundTransparency = 1
-Content.Position = UDim2.fromOffset(0, 50)
-Content.Size = UDim2.new(1, 0, 1, -50)
-Content.Parent = Base
-
-local ContentPadding = Instance.new("UIPadding")
-ContentPadding.PaddingBottom = UDim.new(0, 25)
-ContentPadding.PaddingLeft = UDim.new(0, 25)
-ContentPadding.PaddingRight = UDim.new(0, 25)
-ContentPadding.PaddingTop = UDim.new(0, 20)
-ContentPadding.Parent = Content
-
-local ContentList = Instance.new("UIListLayout")
-ContentList.Padding = UDim.new(0, 10)
-ContentList.SortOrder = Enum.SortOrder.LayoutOrder
-ContentList.Parent = Content
-
-
-local GameInfo = Instance.new("TextLabel")
-GameInfo.Name = "GameInfo"
-GameInfo.FontFace = Font.new("rbxassetid://12187365364", Enum.FontWeight.Medium)
-GameInfo.Text = "Game:" .. gameConfig.name
-GameInfo.TextColor3 = Color3.fromRGB(168, 85, 247)
-GameInfo.TextSize = 12
-GameInfo.TextTransparency = 0.3
-GameInfo.TextXAlignment = Enum.TextXAlignment.Center
-GameInfo.BackgroundTransparency = 1
-GameInfo.Size = UDim2.new(1, 0, 0, 16)
-GameInfo.LayoutOrder = -1
-GameInfo.Parent = Content
-
-
-local Description = Instance.new("TextLabel")
-Description.Name = "Description"
-Description.FontFace = Font.new("rbxassetid://12187365364")
-Description.Text = Config.Description
-Description.TextColor3 = Color3.fromRGB(255, 255, 255)
-Description.TextSize = 12
-Description.TextTransparency = 0.5
-Description.TextXAlignment = Enum.TextXAlignment.Center
-Description.TextWrapped = true
-Description.BackgroundTransparency = 1
-Description.Size = UDim2.new(1, 0, 0, 16)
-Description.Parent = Content
-
-
-local KeyInput = Instance.new("TextBox")
-KeyInput.Name = "KeyInput"
-KeyInput.FontFace = Font.new("rbxassetid://12187365364")
-KeyInput.PlaceholderText = "Paste your key here..."
-KeyInput.PlaceholderColor3 = Color3.fromRGB(255, 255, 255)
-KeyInput.Text = ""
-KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-KeyInput.TextSize = 13
-KeyInput.TextTransparency = 0.1
-KeyInput.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-KeyInput.BackgroundTransparency = 0.95
-KeyInput.BorderSizePixel = 0
-KeyInput.Size = UDim2.new(1, 0, 0, 38)
-KeyInput.ClearTextOnFocus = false
-KeyInput.LayoutOrder = 1
-KeyInput.Parent = Content
-
-local KeyInputCorner = Instance.new("UICorner")
-KeyInputCorner.CornerRadius = UDim.new(0, 6)
-KeyInputCorner.Parent = KeyInput
-
-local KeyInputStroke = Instance.new("UIStroke")
-KeyInputStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-KeyInputStroke.Color = Color3.fromRGB(255, 255, 255)
-KeyInputStroke.Transparency = 0.9
-KeyInputStroke.Parent = KeyInput
-
-local KeyInputPadding = Instance.new("UIPadding")
-KeyInputPadding.PaddingLeft = UDim.new(0, 12)
-KeyInputPadding.PaddingRight = UDim.new(0, 12)
-KeyInputPadding.Parent = KeyInput
-
-
-local SubmitBtn = Instance.new("TextButton")
-SubmitBtn.Name = "SubmitBtn"
-SubmitBtn.Text = ""
-SubmitBtn.FontFace = Font.new("rbxassetid://12187365364", Enum.FontWeight.Medium)
-SubmitBtn.RichText = true
-SubmitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-SubmitBtn.TextSize = 13
-SubmitBtn.TextTransparency = 0.1
-SubmitBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-SubmitBtn.BackgroundTransparency = 0.95
-SubmitBtn.BorderSizePixel = 0
-SubmitBtn.Size = UDim2.new(1, 0, 0, 38)
-SubmitBtn.AutoButtonColor = false
-SubmitBtn.LayoutOrder = 2
-SubmitBtn.Parent = Content
-
-local SubmitBtnCorner = Instance.new("UICorner")
-SubmitBtnCorner.CornerRadius = UDim.new(0, 6)
-SubmitBtnCorner.Parent = SubmitBtn
-
-local SubmitBtnStroke = Instance.new("UIStroke")
-SubmitBtnStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-SubmitBtnStroke.Color = Color3.fromRGB(255, 255, 255)
-SubmitBtnStroke.Transparency = 0.9
-SubmitBtnStroke.Parent = SubmitBtn
-
-local SubmitBtnText = Instance.new("TextLabel")
-SubmitBtnText.Name = "SubmitBtnText"
-SubmitBtnText.Text = "Verify Key"
-SubmitBtnText.FontFace = Font.new("rbxassetid://12187365364", Enum.FontWeight.Medium)
-SubmitBtnText.RichText = true
-SubmitBtnText.TextColor3 = Color3.fromRGB(255, 255, 255)
-SubmitBtnText.TextSize = 13
-SubmitBtnText.BackgroundTransparency = 1
-SubmitBtnText.Size = UDim2.new(1, 0, 1, 0)
-SubmitBtnText.Parent = SubmitBtn
-
-local SubmitBtnGradient = Instance.new("UIGradient")
-SubmitBtnGradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(168, 85, 247)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(124, 58, 237))
-}
-SubmitBtnGradient.Rotation = 45
-SubmitBtnGradient.Parent = SubmitBtnText
-
-SubmitBtn.MouseEnter:Connect(function()
-    Tween(SubmitBtn, TweenInfo.new(0.2, Enum.EasingStyle.Sine), {BackgroundTransparency = 0.9}):Play()
-end)
-SubmitBtn.MouseLeave:Connect(function()
-    Tween(SubmitBtn, TweenInfo.new(0.2, Enum.EasingStyle.Sine), {BackgroundTransparency = 0.95}):Play()
-end)
-
-
-local Divider1 = Instance.new("Frame")
-Divider1.Name = "Divider1"
-Divider1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Divider1.BackgroundTransparency = 0.9
-Divider1.BorderSizePixel = 0
-Divider1.Size = UDim2.new(1, 0, 0, 1)
-Divider1.LayoutOrder = 2.5
-Divider1.Parent = Content
-
-
-local DiscordBtn = Instance.new("TextButton")
-DiscordBtn.Name = "DiscordBtn"
-DiscordBtn.Text = ""
-DiscordBtn.BackgroundTransparency = 1
-DiscordBtn.BorderSizePixel = 0
-DiscordBtn.Size = UDim2.new(1, 0, 0, 20)
-DiscordBtn.AutoButtonColor = false
-DiscordBtn.LayoutOrder = 3
-DiscordBtn.Parent = Content
-
-local DiscordBtnText = Instance.new("TextLabel")
-DiscordBtnText.Name = "DiscordBtnText"
-DiscordBtnText.Text = "Need support? Join our Discord"
-DiscordBtnText.FontFace = Font.new("rbxassetid://12187365364")
-DiscordBtnText.RichText = true
-DiscordBtnText.TextColor3 = Color3.fromRGB(255, 255, 255)
-DiscordBtnText.TextSize = 12
-DiscordBtnText.TextTransparency = 0.5
-DiscordBtnText.BackgroundTransparency = 1
-DiscordBtnText.Size = UDim2.new(1, 0, 1, 0)
-DiscordBtnText.Parent = DiscordBtn
-
-local DiscordTextGradient = Instance.new("UIGradient")
-DiscordTextGradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
-    ColorSequenceKeypoint.new(0.6, Color3.fromRGB(255, 255, 255)),
-    ColorSequenceKeypoint.new(0.61, Color3.fromRGB(168, 85, 247)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(124, 58, 237))
-}
-DiscordTextGradient.Parent = DiscordBtnText
-
-
-local Divider2Container = Instance.new("Frame")
-Divider2Container.Name = "Divider2Container"
-Divider2Container.BackgroundTransparency = 1
-Divider2Container.Size = UDim2.new(1, 0, 0, 20)
-Divider2Container.LayoutOrder = 3.5
-Divider2Container.Parent = Content
-
-local Divider2Left = Instance.new("Frame")
-Divider2Left.Name = "Divider2Left"
-Divider2Left.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Divider2Left.BackgroundTransparency = 0.9
-Divider2Left.BorderSizePixel = 0
-Divider2Left.AnchorPoint = Vector2.new(0, 0.5)
-Divider2Left.Position = UDim2.fromScale(0, 0.5)
-Divider2Left.Size = UDim2.new(0.35, -5, 0, 1)
-Divider2Left.Parent = Divider2Container
-
-local Divider2Text = Instance.new("TextLabel")
-Divider2Text.Name = "Divider2Text"
-Divider2Text.Text = "Get Key"
-Divider2Text.FontFace = Font.new("rbxassetid://12187365364", Enum.FontWeight.Medium)
-Divider2Text.TextColor3 = Color3.fromRGB(255, 255, 255)
-Divider2Text.TextSize = 12
-Divider2Text.TextTransparency = 0.5
-Divider2Text.BackgroundTransparency = 1
-Divider2Text.AnchorPoint = Vector2.new(0.5, 0.5)
-Divider2Text.Position = UDim2.fromScale(0.5, 0.5)
-Divider2Text.Size = UDim2.fromOffset(60, 20)
-Divider2Text.Parent = Divider2Container
-
-local Divider2Right = Instance.new("Frame")
-Divider2Right.Name = "Divider2Right"
-Divider2Right.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Divider2Right.BackgroundTransparency = 0.9
-Divider2Right.BorderSizePixel = 0
-Divider2Right.AnchorPoint = Vector2.new(1, 0.5)
-Divider2Right.Position = UDim2.fromScale(1, 0.5)
-Divider2Right.Size = UDim2.new(0.35, -5, 0, 1)
-Divider2Right.Parent = Divider2Container
-
-
-local GetKeyContainer = Instance.new("Frame")
-GetKeyContainer.Name = "GetKeyContainer"
-GetKeyContainer.BackgroundTransparency = 1
-GetKeyContainer.Size = UDim2.new(1, 0, 0, 38)
-GetKeyContainer.LayoutOrder = 4
-GetKeyContainer.Parent = Content
-
-local GetKeyList = Instance.new("UIListLayout")
-GetKeyList.Padding = UDim.new(0, 8)
-GetKeyList.FillDirection = Enum.FillDirection.Horizontal
-GetKeyList.SortOrder = Enum.SortOrder.LayoutOrder
-GetKeyList.Parent = GetKeyContainer
-
-
-for i, buttonData in ipairs(Config.GetKeyButtons) do
-    local GetKeyBtn = Instance.new("TextButton")
-    GetKeyBtn.Name = "GetKeyBtn" .. i
-    GetKeyBtn.Text = ""
-    GetKeyBtn.FontFace = Font.new("rbxassetid://12187365364", Enum.FontWeight.Medium)
-    GetKeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    GetKeyBtn.TextSize = 12
-    GetKeyBtn.TextTransparency = 0.1
-    GetKeyBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    GetKeyBtn.BackgroundTransparency = 0.95
-    GetKeyBtn.BorderSizePixel = 0
-    GetKeyBtn.Size = UDim2.new(0.32, 0, 1, 0)
-    GetKeyBtn.AutoButtonColor = false
-    GetKeyBtn.Parent = GetKeyContainer
-
-    local GetKeyBtnCorner = Instance.new("UICorner")
-    GetKeyBtnCorner.CornerRadius = UDim.new(0, 6)
-    GetKeyBtnCorner.Parent = GetKeyBtn
-
-    local GetKeyBtnStroke = Instance.new("UIStroke")
-    GetKeyBtnStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-    GetKeyBtnStroke.Color = Color3.fromRGB(255, 255, 255)
-    GetKeyBtnStroke.Transparency = 0.9
-    GetKeyBtnStroke.Parent = GetKeyBtn
-
-    local GetKeyBtnText = Instance.new("TextLabel")
-    GetKeyBtnText.Name = "GetKeyBtnText"
-    GetKeyBtnText.Text = buttonData.Icon .. " " .. buttonData.Name
-    GetKeyBtnText.FontFace = Font.new("rbxassetid://12187365364", Enum.FontWeight.Medium)
-    GetKeyBtnText.RichText = true
-    GetKeyBtnText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    GetKeyBtnText.TextSize = 12
-    GetKeyBtnText.BackgroundTransparency = 1
-    GetKeyBtnText.Size = UDim2.new(1, 0, 1, 0)
-    GetKeyBtnText.Parent = GetKeyBtn
-
-    local GetKeyBtnGradient = Instance.new("UIGradient")
-    GetKeyBtnGradient.Color = ColorSequence.new{
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(168, 85, 247)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(124, 58, 237))
-    }
-    GetKeyBtnGradient.Rotation = 45
-    GetKeyBtnGradient.Parent = GetKeyBtnText
-
-    GetKeyBtn.MouseEnter:Connect(function()
-        Tween(GetKeyBtn, TweenInfo.new(0.2, Enum.EasingStyle.Sine), {BackgroundTransparency = 0.9}):Play()
-    end)
-    GetKeyBtn.MouseLeave:Connect(function()
-        Tween(GetKeyBtn, TweenInfo.new(0.2, Enum.EasingStyle.Sine), {BackgroundTransparency = 0.95}):Play()
-    end)
-
-    GetKeyBtn.MouseButton1Click:Connect(function()
-        setclipboard(buttonData.Link)
-        Description.Text = buttonData.Name .. " link copied!"
-        Description.TextColor3 = Color3.fromRGB(100, 255, 100)
-        task.wait(2)
-        Description.Text = Config.Description
-        Description.TextColor3 = Color3.fromRGB(255, 255, 255)
-    end)
-end
-
-
-
-
-local function UpdateStatus(msg, color)
-    Description.Text = msg
-    Description.TextColor3 = color
-end
-
-local function ButtonHover(btn, defaultTrans, hoverTrans)
-    local btnText = btn:FindFirstChild("DiscordBtnText")
-    if btnText then
-        btn.MouseEnter:Connect(function()
-            Tween(btnText, TweenInfo.new(0.2, Enum.EasingStyle.Sine), {TextTransparency = hoverTrans}):Play()
-        end)
-        btn.MouseLeave:Connect(function()
-            Tween(btnText, TweenInfo.new(0.2, Enum.EasingStyle.Sine), {TextTransparency = defaultTrans}):Play()
-        end)
-    end
-end
-
-local function VerifyKey()
-    local key = KeyInput.Text:gsub("%s+", "")
-    if key == "" then
-        UpdateStatus("Please enter a key!", Color3.fromRGB(255, 100, 100))
-        task.wait(2)
-        UpdateStatus(Config.Description, Color3.fromRGB(255, 255, 255))
-        return
-    end
-
-    UpdateStatus("Checking key...", Color3.fromRGB(255, 200, 100))
-    SubmitBtnText.Text = "Checking..."
-    
-    task.spawn(function()
-        local tier, result = determineKeyTier(key)
-        
-        if tier then
-            UpdateStatus("Key valid! Loading...", Color3.fromRGB(100, 255, 100))
-            
-            getgenv().script_key = key
-            getgenv().key_tier = tier
-            
-            
-            if writefile then
-                pcall(function()
-                    writefile(keyFileName, key)
-                end)
-            end
-            
-            game:GetService("StarterGui"):SetCore("SendNotification", {
-                Title = Config.Title;
-                Text = gameConfig.name .. " | " .. tier:upper() .. " loaded!";
-                Icon = "rbxassetid://123156553209294";
-                Duration = 5;
-            })
-            
-            KeySystemUI:Destroy()
-            loadScriptByTier(tier)
-        else
-            local statusMessages = {
-                KEY_HWID_LOCKED = "Key locked to different device",
-                KEY_INCORRECT = "Invalid key",
-                KEY_EXPIRED = "Key expired",
-                KEY_BANNED = "Key banned",
-                KEY_INVALID = "Invalid key format",
-                SCRIPT_ID_INCORRECT = "Script ID error",
-                SCRIPT_ID_INVALID = "Invalid script ID",
-                INVALID_EXECUTOR = "Unsupported executor"
-            }
-            
-            local msg = statusMessages[result.code] or ("Error: " .. tostring(result.message))
-            UpdateStatus(msg, Color3.fromRGB(255, 100, 100))
-            SubmitBtnText.Text = "Verify Key"
-            task.wait(2)
-            UpdateStatus(Config.Description, Color3.fromRGB(255, 255, 255))
-        end
-    end)
-end
-
-ButtonHover(DiscordBtn, 0.5, 0.3)
-
-
-
-
-CloseBtn.MouseButton1Click:Connect(function()
-    KeySystemUI:Destroy()
-end)
-
-DiscordBtn.MouseButton1Click:Connect(function()
-    setclipboard(Config.DiscordLink)
-    UpdateStatus("Discord link copied!", Color3.fromRGB(100, 255, 100))
-    task.wait(2)
-    UpdateStatus(Config.Description, Color3.fromRGB(255, 255, 255))
-end)
-
-SubmitBtn.MouseButton1Click:Connect(function()
-    VerifyKey()
-end)
-
-KeyInput.FocusLost:Connect(function(enterPressed)
-    if enterPressed then
-        VerifyKey()
-    end
-end)
-
-
-
-
-local dragging, dragInput, dragStart, startPos
-
-Topbar.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        startPos = Base.Position
-
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
-    end
-end)
-
-Topbar.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement then
-        dragInput = input
-    end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
-        local delta = input.Position - dragStart
-        Base.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-end)
-
-
-
-
-game:GetService("StarterGui"):SetCore("SendNotification", {
-    Title = Config.Title;
-    Text = "Key system loaded for " .. gameConfig.name;
-    Icon = "rbxassetid://123156553209294";
-    Duration = 3;
-})
+local a={[121864768012064]={name='Fish It',freemium_script_id=
+'ae6d8a7c30031f5a06d0c7693d4128a6',premium_script_id=
+'b9f3d3060752efdd4e18b683325a3b75'}}local b={DiscordLink=
+'https://discord.gg/houseofnoctis',LogoAssetId='rbxassetid://123156553209294',
+Title='House of Noctis',Description='Welcome! Enter your key below.',
+GetKeyButtons={{Name='LootLabs',Link=
+[[https://ads.luarmor.net/get_key?for=House_of_Noctis_Lootlabs-QCWkeOKymWMZ]],
+Icon=''},{Name='Linkvertise',Link=
+[[https://ads.luarmor.net/get_key?for=House_of_Noctis_Linkvertise-NddozkMCmXIM]]
+,Icon=''},{Name='Work.ink',Link=
+[[https://ads.luarmor.net/get_key?for=House_of_Noctis_Work_Ink-mIdJQJPebuSd]],
+Icon=''}}}local c=game.PlaceId local d=a[c]if not d then game:GetService
+'StarterGui':SetCore('SendNotification',{Title='Unsupported Game',Text=
+'PlaceId: '..c..' not supported.',Icon='rbxassetid://123156553209294',Duration=
+10})warn('Game not supported. PlaceId:',c)return end local e,f=pcall(function()
+return loadstring(game:HttpGet'https://sdkapi-public.luarmor.net/library.lua')()
+end)if not e then warn('Failed to load Luarmor library:',f)return end
+local function loadScriptByTier(g)local h=g=='premium'and d.premium_script_id or
+d.freemium_script_id f.script_id=h local i=getgenv().script_key or _G.script_key
+if i then pcall(function()script_key=i end)pcall(function()_G.script_key=i end)
+end local j,k=pcall(function()f.load_script()end)if j then return true else
+warn('Failed to load script:',k)return false,k end end local function
+determineKeyTier(g)f.script_id=d.premium_script_id local h,i=pcall(function()
+return f.check_key(g)end)if h and i.code=='KEY_VALID'then return'premium',i end
+if h and(i.code=='KEY_INCORRECT'or i.code=='KEY_INVALID')then f.script_id=d.
+freemium_script_id local j,k=pcall(function()return f.check_key(g)end)if j and k
+.code=='KEY_VALID'then return'freemium',k end return nil,k end return nil,i end
+local g='NoctisKey'..c..'.txt'local function checkSavedKey()local h pcall(
+function()if script_key and script_key~=''then h=script_key end end)if not h
+then h=rawget(_G,'script_key')or _G.script_key end if not h then h=getgenv().
+script_key end if not h and isfile and readfile then local i,j=pcall(function()
+return readfile(g)end)if i and j and j~=''then h=j:gsub('%s+','')end end if h
+then h=h:gsub('%s+','')end if h and h~=''then local i=determineKeyTier(h)if i
+then pcall(function()script_key=h end)pcall(function()_G.script_key=h end)pcall(
+function()getgenv().script_key=h end)getgenv().key_tier=i if isfile and
+writefile then pcall(function()writefile(g,h)end)end game:GetService'StarterGui'
+:SetCore('SendNotification',{Title='Key Valid!',Text=d.name..' | '..i:upper(),
+Icon='rbxassetid://123156553209294',Duration=3})loadScriptByTier(i)return true
+else if isfile and delfile then pcall(function()if isfile(g)then delfile(g)end
+end)end end end return false end if rawget(_G,'script_key')and not getgenv().
+script_key then getgenv().script_key=rawget(_G,'script_key')elseif _G.script_key
+and not getgenv().script_key then getgenv().script_key=_G.script_key end if
+checkSavedKey()then return end local h=game:GetService'TweenService'local i=game
+:GetService'UserInputService'local j=game:GetService'Players'local k=j.
+LocalPlayer local function GetGui()local l=Instance.new'ScreenGui'l.ScreenInsets
+=Enum.ScreenInsets.None l.ResetOnSpawn=false l.ZIndexBehavior=Enum.
+ZIndexBehavior.Sibling l.DisplayOrder=2147483647 l.Parent=game:GetService
+'CoreGui'return l end local function Tween(l,m,n)return h:Create(l,m,n)end local
+l=GetGui()local m=Instance.new'Frame'm.Name='Base'm.AnchorPoint=Vector2.new(0.5,
+0.5)m.BackgroundColor3=Color3.fromRGB(0,0,0)m.BackgroundTransparency=0.1 m.
+BorderSizePixel=0 m.Position=UDim2.fromScale(0.5,0.5)m.Size=UDim2.fromOffset(420
+,360)m.Parent=l local n=Instance.new'UICorner'n.CornerRadius=UDim.new(0,10)n.
+Parent=m local o=Instance.new'UIStroke'o.ApplyStrokeMode=Enum.ApplyStrokeMode.
+Border o.Color=Color3.fromRGB(255,255,255)o.Transparency=0.9 o.Parent=m local p=
+Instance.new'Frame'p.Name='Topbar'p.BackgroundColor3=Color3.fromRGB(255,255,255)
+p.BackgroundTransparency=1 p.Size=UDim2.new(1,0,0,50)p.Parent=m local q=Instance
+.new'Frame'q.AnchorPoint=Vector2.new(0,1)q.BackgroundColor3=Color3.fromRGB(255,
+255,255)q.BackgroundTransparency=0.9 q.BorderSizePixel=0 q.Position=UDim2.
+fromScale(0,1)q.Size=UDim2.new(1,0,0,1)q.Parent=p local r=Instance.new
+'UIPadding'r.PaddingLeft=UDim.new(0,20)r.PaddingRight=UDim.new(0,20)r.Parent=p
+local s=Instance.new'ImageLabel's.Name='Logo's.Image=b.LogoAssetId s.
+BackgroundTransparency=1 s.AnchorPoint=Vector2.new(0,0.5)s.Position=UDim2.
+fromScale(0,0.5)s.Size=UDim2.fromOffset(32,32)s.Parent=p local t=Instance.new
+'UICorner't.CornerRadius=UDim.new(0,6)t.Parent=s local u=Instance.new'TextLabel'
+u.Name='Title'u.FontFace=Font.new('rbxassetid://12187365364',Enum.FontWeight.
+SemiBold)u.Text=b.Title u.TextColor3=Color3.fromRGB(255,255,255)u.TextSize=16 u.
+TextTransparency=0.1 u.TextXAlignment=Enum.TextXAlignment.Center u.
+BackgroundTransparency=1 u.AnchorPoint=Vector2.new(0,0.5)u.Position=UDim2.
+fromScale(0.04,0.5)u.Size=UDim2.new(1,-80,0,20)u.Parent=p local v=Instance.new
+'UIPadding'v.PaddingLeft=UDim.new(0,45)v.Parent=u local w=Instance.new
+'TextButton'w.Name='CloseBtn'w.Text='X'w.FontFace=Font.new(
+'rbxasset://fonts/families/SourceSansPro.json',Enum.FontWeight.Bold)w.TextColor3
+=Color3.fromRGB(255,255,255)w.TextScaled=true w.BackgroundTransparency=1 w.
+AnchorPoint=Vector2.new(1,0.5)w.Position=UDim2.new(1,0,0.5,0)w.Size=UDim2.
+fromOffset(15,15)w.Parent=p local x=Instance.new'Frame'x.Name='Content'x.
+BackgroundTransparency=1 x.Position=UDim2.fromOffset(0,50)x.Size=UDim2.new(1,0,1
+,-50)x.Parent=m local y=Instance.new'UIPadding'y.PaddingBottom=UDim.new(0,25)y.
+PaddingLeft=UDim.new(0,25)y.PaddingRight=UDim.new(0,25)y.PaddingTop=UDim.new(0,
+20)y.Parent=x local z=Instance.new'UIListLayout'z.Padding=UDim.new(0,10)z.
+SortOrder=Enum.SortOrder.LayoutOrder z.Parent=x local A=Instance.new'TextLabel'A
+.Name='GameInfo'A.FontFace=Font.new('rbxassetid://12187365364',Enum.FontWeight.
+Medium)A.Text='Game:'..d.name A.TextColor3=Color3.fromRGB(168,85,247)A.TextSize=
+12 A.TextTransparency=0.3 A.TextXAlignment=Enum.TextXAlignment.Center A.
+BackgroundTransparency=1 A.Size=UDim2.new(1,0,0,16)A.LayoutOrder=-1 A.Parent=x
+local B=Instance.new'TextLabel'B.Name='Description'B.FontFace=Font.new
+'rbxassetid://12187365364'B.Text=b.Description B.TextColor3=Color3.fromRGB(255,
+255,255)B.TextSize=12 B.TextTransparency=0.5 B.TextXAlignment=Enum.
+TextXAlignment.Center B.TextWrapped=true B.BackgroundTransparency=1 B.Size=UDim2
+.new(1,0,0,16)B.Parent=x local C=Instance.new'TextBox'C.Name='KeyInput'C.
+FontFace=Font.new'rbxassetid://12187365364'C.PlaceholderText=
+'Paste your key here...'C.PlaceholderColor3=Color3.fromRGB(255,255,255)C.Text=''
+C.TextColor3=Color3.fromRGB(255,255,255)C.TextSize=13 C.TextTransparency=0.1 C.
+BackgroundColor3=Color3.fromRGB(255,255,255)C.BackgroundTransparency=0.95 C.
+BorderSizePixel=0 C.Size=UDim2.new(1,0,0,38)C.ClearTextOnFocus=false C.
+LayoutOrder=1 C.Parent=x local D=Instance.new'UICorner'D.CornerRadius=UDim.new(0
+,6)D.Parent=C local E=Instance.new'UIStroke'E.ApplyStrokeMode=Enum.
+ApplyStrokeMode.Border E.Color=Color3.fromRGB(255,255,255)E.Transparency=0.9 E.
+Parent=C local F=Instance.new'UIPadding'F.PaddingLeft=UDim.new(0,12)F.
+PaddingRight=UDim.new(0,12)F.Parent=C local G=Instance.new'TextButton'G.Name=
+'SubmitBtn'G.Text=''G.FontFace=Font.new('rbxassetid://12187365364',Enum.
+FontWeight.Medium)G.RichText=true G.TextColor3=Color3.fromRGB(255,255,255)G.
+TextSize=13 G.TextTransparency=0.1 G.BackgroundColor3=Color3.fromRGB(255,255,255
+)G.BackgroundTransparency=0.95 G.BorderSizePixel=0 G.Size=UDim2.new(1,0,0,38)G.
+AutoButtonColor=false G.LayoutOrder=2 G.Parent=x local H=Instance.new'UICorner'H
+.CornerRadius=UDim.new(0,6)H.Parent=G local I=Instance.new'UIStroke'I.
+ApplyStrokeMode=Enum.ApplyStrokeMode.Border I.Color=Color3.fromRGB(255,255,255)I
+.Transparency=0.9 I.Parent=G local J=Instance.new'TextLabel'J.Name=
+'SubmitBtnText'J.Text='Verify Key'J.FontFace=Font.new('rbxassetid://12187365364'
+,Enum.FontWeight.Medium)J.RichText=true J.TextColor3=Color3.fromRGB(255,255,255)
+J.TextSize=13 J.BackgroundTransparency=1 J.Size=UDim2.new(1,0,1,0)J.Parent=G
+local K=Instance.new'UIGradient'K.Color=ColorSequence.new{ColorSequenceKeypoint.
+new(0,Color3.fromRGB(168,85,247)),ColorSequenceKeypoint.new(1,Color3.fromRGB(124
+,58,237))}K.Rotation=45 K.Parent=J G.MouseEnter:Connect(function()Tween(G,
+TweenInfo.new(0.2,Enum.EasingStyle.Sine),{BackgroundTransparency=0.9}):Play()end
+)G.MouseLeave:Connect(function()Tween(G,TweenInfo.new(0.2,Enum.EasingStyle.Sine)
+,{BackgroundTransparency=0.95}):Play()end)local L=Instance.new'Frame'L.Name=
+'Divider1'L.BackgroundColor3=Color3.fromRGB(255,255,255)L.BackgroundTransparency
+=0.9 L.BorderSizePixel=0 L.Size=UDim2.new(1,0,0,1)L.LayoutOrder=2.5 L.Parent=x
+local M=Instance.new'TextButton'M.Name='DiscordBtn'M.Text=''M.
+BackgroundTransparency=1 M.BorderSizePixel=0 M.Size=UDim2.new(1,0,0,20)M.
+AutoButtonColor=false M.LayoutOrder=3 M.Parent=x local N=Instance.new'TextLabel'
+N.Name='DiscordBtnText'N.Text='Need support? Join our Discord'N.FontFace=Font.
+new'rbxassetid://12187365364'N.RichText=true N.TextColor3=Color3.fromRGB(255,255
+,255)N.TextSize=12 N.TextTransparency=0.5 N.BackgroundTransparency=1 N.Size=
+UDim2.new(1,0,1,0)N.Parent=M local O=Instance.new'UIGradient'O.Color=
+ColorSequence.new{ColorSequenceKeypoint.new(0,Color3.fromRGB(255,255,255)),
+ColorSequenceKeypoint.new(0.6,Color3.fromRGB(255,255,255)),ColorSequenceKeypoint
+.new(0.61,Color3.fromRGB(168,85,247)),ColorSequenceKeypoint.new(1,Color3.
+fromRGB(124,58,237))}O.Parent=N local P=Instance.new'Frame'P.Name=
+'Divider2Container'P.BackgroundTransparency=1 P.Size=UDim2.new(1,0,0,20)P.
+LayoutOrder=3.5 P.Parent=x local Q=Instance.new'Frame'Q.Name='Divider2Left'Q.
+BackgroundColor3=Color3.fromRGB(255,255,255)Q.BackgroundTransparency=0.9 Q.
+BorderSizePixel=0 Q.AnchorPoint=Vector2.new(0,0.5)Q.Position=UDim2.fromScale(0,
+0.5)Q.Size=UDim2.new(0.35,-5,0,1)Q.Parent=P local R=Instance.new'TextLabel'R.
+Name='Divider2Text'R.Text='Get Key'R.FontFace=Font.new(
+'rbxassetid://12187365364',Enum.FontWeight.Medium)R.TextColor3=Color3.fromRGB(
+255,255,255)R.TextSize=12 R.TextTransparency=0.5 R.BackgroundTransparency=1 R.
+AnchorPoint=Vector2.new(0.5,0.5)R.Position=UDim2.fromScale(0.5,0.5)R.Size=UDim2.
+fromOffset(60,20)R.Parent=P local S=Instance.new'Frame'S.Name='Divider2Right'S.
+BackgroundColor3=Color3.fromRGB(255,255,255)S.BackgroundTransparency=0.9 S.
+BorderSizePixel=0 S.AnchorPoint=Vector2.new(1,0.5)S.Position=UDim2.fromScale(1,
+0.5)S.Size=UDim2.new(0.35,-5,0,1)S.Parent=P local T=Instance.new'Frame'T.Name=
+'GetKeyContainer'T.BackgroundTransparency=1 T.Size=UDim2.new(1,0,0,38)T.
+LayoutOrder=4 T.Parent=x local U=Instance.new'UIListLayout'U.Padding=UDim.new(0,
+8)U.FillDirection=Enum.FillDirection.Horizontal U.SortOrder=Enum.SortOrder.
+LayoutOrder U.Parent=T for V,W in ipairs(b.GetKeyButtons)do local X=Instance.new
+'TextButton'X.Name='GetKeyBtn'..V X.Text=''X.FontFace=Font.new(
+'rbxassetid://12187365364',Enum.FontWeight.Medium)X.TextColor3=Color3.fromRGB(
+255,255,255)X.TextSize=12 X.TextTransparency=0.1 X.BackgroundColor3=Color3.
+fromRGB(255,255,255)X.BackgroundTransparency=0.95 X.BorderSizePixel=0 X.Size=
+UDim2.new(0.32,0,1,0)X.AutoButtonColor=false X.Parent=T local Y=Instance.new
+'UICorner'Y.CornerRadius=UDim.new(0,6)Y.Parent=X local Z=Instance.new'UIStroke'Z
+.ApplyStrokeMode=Enum.ApplyStrokeMode.Border Z.Color=Color3.fromRGB(255,255,255)
+Z.Transparency=0.9 Z.Parent=X local _=Instance.new'TextLabel'_.Name=
+'GetKeyBtnText'_.Text=W.Icon..' '..W.Name _.FontFace=Font.new(
+'rbxassetid://12187365364',Enum.FontWeight.Medium)_.RichText=true _.TextColor3=
+Color3.fromRGB(255,255,255)_.TextSize=12 _.BackgroundTransparency=1 _.Size=UDim2
+.new(1,0,1,0)_.Parent=X local aa=Instance.new'UIGradient'aa.Color=ColorSequence.
+new{ColorSequenceKeypoint.new(0,Color3.fromRGB(168,85,247)),
+ColorSequenceKeypoint.new(1,Color3.fromRGB(124,58,237))}aa.Rotation=45 aa.Parent
+=_ X.MouseEnter:Connect(function()Tween(X,TweenInfo.new(0.2,Enum.EasingStyle.
+Sine),{BackgroundTransparency=0.9}):Play()end)X.MouseLeave:Connect(function()
+Tween(X,TweenInfo.new(0.2,Enum.EasingStyle.Sine),{BackgroundTransparency=0.95}):
+Play()end)X.MouseButton1Click:Connect(function()setclipboard(W.Link)B.Text=W.
+Name..' link copied!'B.TextColor3=Color3.fromRGB(100,255,100)task.wait(2)B.Text=
+b.Description B.TextColor3=Color3.fromRGB(255,255,255)end)end local function
+UpdateStatus(aa,V)B.Text=aa B.TextColor3=V end local function ButtonHover(aa,V,W
+)local X=aa:FindFirstChild'DiscordBtnText'if X then aa.MouseEnter:Connect(
+function()Tween(X,TweenInfo.new(0.2,Enum.EasingStyle.Sine),{TextTransparency=W})
+:Play()end)aa.MouseLeave:Connect(function()Tween(X,TweenInfo.new(0.2,Enum.
+EasingStyle.Sine),{TextTransparency=V}):Play()end)end end local function
+VerifyKey()local aa=C.Text:gsub('%s+','')if aa==''then UpdateStatus(
+'Please enter a key!',Color3.fromRGB(255,100,100))task.wait(2)UpdateStatus(b.
+Description,Color3.fromRGB(255,255,255))return end UpdateStatus(
+'Checking key...',Color3.fromRGB(255,200,100))J.Text='Checking...'task.spawn(
+function()local V,W=determineKeyTier(aa)if V then UpdateStatus(
+'Key valid! Loading...',Color3.fromRGB(100,255,100))getgenv().script_key=aa
+getgenv().key_tier=V if writefile then pcall(function()writefile(g,aa)end)end
+game:GetService'StarterGui':SetCore('SendNotification',{Title=b.Title,Text=d.
+name..' | '..V:upper()..' loaded!',Icon='rbxassetid://123156553209294',Duration=
+5})l:Destroy()loadScriptByTier(V)else local X={KEY_HWID_LOCKED=
+'Key locked to different device',KEY_INCORRECT='Invalid key',KEY_EXPIRED=
+'Key expired',KEY_BANNED='Key banned',KEY_INVALID='Invalid key format',
+SCRIPT_ID_INCORRECT='Script ID error',SCRIPT_ID_INVALID='Invalid script ID',
+INVALID_EXECUTOR='Unsupported executor'}local Y=X[W.code]or('Error: '..tostring(
+W.message))UpdateStatus(Y,Color3.fromRGB(255,100,100))J.Text='Verify Key'task.
+wait(2)UpdateStatus(b.Description,Color3.fromRGB(255,255,255))end end)end
+ButtonHover(M,0.5,0.3)w.MouseButton1Click:Connect(function()l:Destroy()end)M.
+MouseButton1Click:Connect(function()setclipboard(b.DiscordLink)UpdateStatus(
+'Discord link copied!',Color3.fromRGB(100,255,100))task.wait(2)UpdateStatus(b.
+Description,Color3.fromRGB(255,255,255))end)G.MouseButton1Click:Connect(function
+()VerifyKey()end)C.FocusLost:Connect(function(aa)if aa then VerifyKey()end end)
+local aa,V,W,X p.InputBegan:Connect(function(Y)if Y.UserInputType==Enum.
+UserInputType.MouseButton1 then aa=true W=Y.Position X=m.Position Y.Changed:
+Connect(function()if Y.UserInputState==Enum.UserInputState.End then aa=false end
+end)end end)p.InputChanged:Connect(function(Y)if Y.UserInputType==Enum.
+UserInputType.MouseMovement then V=Y end end)i.InputChanged:Connect(function(Y)
+if Y==V and aa then local Z=Y.Position-W m.Position=UDim2.new(X.X.Scale,X.X.
+Offset+Z.X,X.Y.Scale,X.Y.Offset+Z.Y)end end)game:GetService'StarterGui':SetCore(
+'SendNotification',{Title=b.Title,Text='Key system loaded for '..d.name,Icon=
+'rbxassetid://123156553209294',Duration=3})
