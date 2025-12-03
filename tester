@@ -1,0 +1,19 @@
+local script_key = script_key or ""
+local placeIds = {
+    [121864768012064] = "e49c7b936634238780d3d01019da02d0",
+}
+
+local currentPlaceId = game.PlaceId
+local scriptId = placeIds[currentPlaceId]
+
+if scriptId then
+    local success, result = pcall(function()
+        return loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/" .. scriptId .. ".lua"))()
+    end)
+    
+    if not success then
+        warn("Load failed:", result)
+    end
+else
+    warn("Game not supported. PlaceId:", currentPlaceId)
+end
