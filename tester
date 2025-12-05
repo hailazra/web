@@ -1,6 +1,7 @@
 local script_key = script_key or ""
 local placeIds = {
     [121864768012064] = "e49c7b936634238780d3d01019da02d0",
+    [76558904092080] = "ca7436a65a7ce94a7ac2ffd1ed11052a",
 }
 
 local currentPlaceId = game.PlaceId
