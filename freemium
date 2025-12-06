@@ -1,1 +1,21 @@
-loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/ae6d8a7c30031f5a06d0c7693d4128a6.lua"))()
+local script_key = script_key or ""
+local placeIds = {
+    [121864768012064] = "ae6d8a7c30031f5a06d0c7693d4128a6",
+    [76558904092080] = "300890774639b39604aeeecb9d0c868c",
+    [129009554587176] = "300890774639b39604aeeecb9d0c868c",
+}
+
+local currentPlaceId = game.PlaceId
+local scriptId = placeIds[currentPlaceId]
+
+if scriptId then
+    local success, result = pcall(function()
+        return loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/" .. scriptId .. ".lua"))()
+    end)
+    
+    if not success then
+        warn("Load failed:", result)
+    end
+else
+    warn("Game not supported. PlaceId:", currentPlaceId)
+end
