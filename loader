@@ -41,6 +41,20 @@ kaitun="c26a6b62fcdda910a6e0d66ca6bccf41",
 lite="3af0a58fb76e707d305b474b80046ce7"
 }
 },
+
+[76558904092080]={
+name="The Forge",
+script_ids={
+normal="bc812aa5b9d09d48f56e19ad55373020",
+}
+},
+
+[129009554587176]={
+name="The Forge",
+script_ids={
+normal="bc812aa5b9d09d48f56e19ad55373020",
+}
+},
 }
 
 
