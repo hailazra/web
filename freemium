@@ -253,7 +253,7 @@ writefile(g,i)
 end)
 end
 
-local l=k=="normal"and"PREMIUM"or("PREMIUM | "..k:upper())
+local l=k=="normal"and"FREEMIUM"or("FREEMIUM | "..k:upper())
 
 game:GetService"StarterGui":SetCore("SendNotification",{
 Title="Key Valid!";
@@ -774,7 +774,7 @@ writefile(g,ab)
 end)
 end
 
-local Z=Y=="normal"and"PREMIUM"or("PREMIUM | "..Y:upper())
+local Z=Y=="normal"and"FREEMIUM"or("FREEMIUM | "..Y:upper())
 
 game:GetService"StarterGui":SetCore("SendNotification",{
 Title=b.Title;
