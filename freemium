@@ -1,21 +1,877 @@
-local script_key = script_key or ""
-local placeIds = {
-    [121864768012064] = "ae6d8a7c30031f5a06d0c7693d4128a6",
-    [76558904092080] = "300890774639b39604aeeecb9d0c868c",
-    [129009554587176] = "300890774639b39604aeeecb9d0c868c",
+if not game:IsLoaded()then game.Loaded:Wait()end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local a={
+
+[121864768012064]={
+name="Fish It",
+script_ids={
+normal="ae6d8a7c30031f5a06d0c7693d4128a6",
+}
+},
 }
 
-local currentPlaceId = game.PlaceId
-local scriptId = placeIds[currentPlaceId]
 
-if scriptId then
-    local success, result = pcall(function()
-        return loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/" .. scriptId .. ".lua"))()
-    end)
-    
-    if not success then
-        warn("Load failed:", result)
-    end
-else
-    warn("Game not supported. PlaceId:", currentPlaceId)
+local b={
+DiscordLink="https://discord.gg/houseofnoctis",
+LogoAssetId="rbxassetid://123156553209294",
+Title="House of Noctis",
+Description="Welcome! Enter your key below.",
+GetKeyButtons={
+{Name="Linkvertise",Link="https://ads.luarmor.net/get_key?for=House_of_Noctis_Linkvertise-NddozkMCmXIM",Icon=""},
+{Name="Linkvertise 2",Link="https://ads.luarmor.net/get_key?for=House_of_Noctis_Linkvertise-NddozkMCmXIM",Icon=""},
+{Name="Work.ink",Link="https://ads.luarmor.net/get_key?for=House_of_Noctis_Work_Ink-mIdJQJPebuSd",Icon=""}
+}
+}
+
+
+
+
+local c=game.PlaceId
+local d=a[c]
+
+if not d then
+game:GetService"StarterGui":SetCore("SendNotification",{
+Title="Unsupported Game";
+Text="PlaceId: "..c.." not supported.";
+Icon="rbxassetid://123156553209294";
+Duration=10;
+})
+warn("Game not supported. PlaceId:",c)
+return
 end
+
+
+
+
+local e,f=pcall(function()
+return loadstring(game:HttpGet"https://sdkapi-public.luarmor.net/library.lua")()
+end)
+
+if not e then
+warn("Failed to load Luarmor library:",f)
+return
+end
+
+
+
+
+local function detectVersion()
+
+
+local g=getgenv().HoN_Version or rawget(_G,"Version")or _G.Version or"normal"
+
+
+if type(g)~="string"then
+g=rawget(_G,"Version")or _G.Version or"normal"
+end
+
+g=tostring(g):lower()
+
+
+if g~="kaitun"and g~="lite"then
+g="normal"
+end
+
+
+warn("DETECTED VERSION:",g:upper())
+
+return g
+end
+
+
+
+
+local function loadScript()
+local g=getgenv().HoN_Version or detectVersion()
+local h=d.script_ids[g]
+
+if not h then
+warn("No script_id found for version:",g)
+return false,"Invalid version"
+end
+
+
+warn("LOADING VERSION:",g:upper())
+
+
+f.script_id=h
+
+
+local i=getgenv().script_key or _G.script_key
+if i then
+pcall(function()script_key=i end)
+pcall(function()_G.script_key=i end)
+end
+
+local j,k=pcall(function()
+f.load_script()
+end)
+
+if j then
+warn"✅ Script loaded successfully!"
+return true
+else
+warn("Failed to load script:",k)
+return false,k
+end
+end
+
+local function checkKey(g)
+local h=detectVersion()
+local i=d.script_ids[h]
+
+if not i then
+warn("No script_id found for version:",h)
+return false,{code="INVALID_VERSION",message="Version not supported"}
+end
+
+f.script_id=i
+local j,k=pcall(function()
+return f.check_key(g)
+end)
+
+if j and k.code=="KEY_VALID"then
+return true,k
+end
+
+return false,k
+end
+
+
+
+
+local g="NoctisFree.txt"
+local h="NoctisKey"..c..".txt"
+
+local function checkSavedKey()
+local i
+
+
+pcall(function()
+if script_key and script_key~=""then
+i=script_key
+end
+end)
+
+
+if not i then
+i=rawget(_G,"script_key")or _G.script_key
+end
+
+
+if not i then
+i=getgenv().script_key
+end
+
+
+if not i and isfile and readfile then
+local j,k=pcall(function()
+return readfile(g)
+end)
+if j and k and k~=""then
+i=k:gsub("%s+","")
+end
+end
+
+
+if not i and isfile and readfile then
+local j,k=pcall(function()
+return readfile(h)
+end)
+if j and k and k~=""then
+i=k:gsub("%s+","")
+
+
+if writefile then
+pcall(function()
+writefile(g,i)
+end)
+end
+
+
+if delfile then
+pcall(function()
+delfile(h)
+end)
+end
+end
+end
+
+
+if i then
+i=i:gsub("%s+","")
+end
+
+if i and i~=""then local
+j=checkKey(i)
+
+if j then
+local k=detectVersion()
+
+
+pcall(function()script_key=i end)
+pcall(function()_G.script_key=i end)
+pcall(function()getgenv().script_key=i end)
+getgenv().HoN_Version=k
+
+
+if isfile and writefile then
+pcall(function()
+writefile(g,i)
+end)
+end
+
+local l=k=="normal"and"PREMIUM"or("PREMIUM | "..k:upper())
+
+game:GetService"StarterGui":SetCore("SendNotification",{
+Title="Key Valid!";
+Text=d.name.." | "..l;
+Icon="rbxassetid://123156553209294";
+Duration=3;
+})
+
+loadScript()
+return true
+else
+
+if isfile and delfile then
+pcall(function()
+if isfile(g)then
+delfile(g)
+end
+if isfile(h)then
+delfile(h)
+end
+end)
+end
+end
+end
+
+return false
+end
+
+
+
+
+
+if rawget(_G,"script_key")and not getgenv().script_key then
+getgenv().script_key=rawget(_G,"script_key")
+
+elseif _G.script_key and not getgenv().script_key then
+getgenv().script_key=_G.script_key
+
+end
+
+
+if rawget(_G,"Version")and type(rawget(_G,"Version"))=="string"and not getgenv().HoN_Version then
+getgenv().HoN_Version=rawget(_G,"Version")
+
+elseif _G.Version and type(_G.Version)=="string"and not getgenv().HoN_Version then
+getgenv().HoN_Version=_G.Version
+
+end
+
+
+warn("Final _G.Version:",_G.Version or"nil")
+
+
+
+if checkSavedKey()then
+return
+end
+
+
+
+
+local i=game:GetService"TweenService"
+local j=game:GetService"UserInputService"
+local k=game:GetService"Players"local l=
+k.LocalPlayer
+
+local function GetGui()
+local m=Instance.new"ScreenGui"
+m.ScreenInsets=Enum.ScreenInsets.None
+m.ResetOnSpawn=false
+m.ZIndexBehavior=Enum.ZIndexBehavior.Sibling
+m.DisplayOrder=2147483647
+m.Parent=game:GetService"CoreGui"
+return m
+end
+
+local function Tween(m,n,o)
+return i:Create(m,n,o)
+end
+
+local m=GetGui()
+
+local n=Instance.new"Frame"
+n.Name="Base"
+n.AnchorPoint=Vector2.new(0.5,0.5)
+n.BackgroundColor3=Color3.fromRGB(0,0,0)
+n.BackgroundTransparency=0.1
+n.BorderSizePixel=0
+n.Position=UDim2.fromScale(0.5,0.5)
+n.Size=UDim2.fromOffset(420,360)
+n.Parent=m
+
+local o=Instance.new"UICorner"
+o.CornerRadius=UDim.new(0,10)
+o.Parent=n
+
+local p=Instance.new"UIStroke"
+p.ApplyStrokeMode=Enum.ApplyStrokeMode.Border
+p.Color=Color3.fromRGB(255,255,255)
+p.Transparency=0.9
+p.Parent=n
+
+
+local q=Instance.new"Frame"
+q.Name="Topbar"
+q.BackgroundColor3=Color3.fromRGB(255,255,255)
+q.BackgroundTransparency=1
+q.Size=UDim2.new(1,0,0,50)
+q.Parent=n
+
+local r=Instance.new"Frame"
+r.AnchorPoint=Vector2.new(0,1)
+r.BackgroundColor3=Color3.fromRGB(255,255,255)
+r.BackgroundTransparency=0.9
+r.BorderSizePixel=0
+r.Position=UDim2.fromScale(0,1)
+r.Size=UDim2.new(1,0,0,1)
+r.Parent=q
+
+local s=Instance.new"UIPadding"
+s.PaddingLeft=UDim.new(0,20)
+s.PaddingRight=UDim.new(0,20)
+s.Parent=q
+
+
+local t=Instance.new"ImageLabel"
+t.Name="Logo"
+t.Image=b.LogoAssetId
+t.BackgroundTransparency=1
+t.AnchorPoint=Vector2.new(0,0.5)
+t.Position=UDim2.fromScale(0,0.5)
+t.Size=UDim2.fromOffset(32,32)
+t.Parent=q
+
+local u=Instance.new"UICorner"
+u.CornerRadius=UDim.new(0,6)
+u.Parent=t
+
+
+local v=Instance.new"TextLabel"
+v.Name="Title"
+v.FontFace=Font.new("rbxassetid://12187365364",Enum.FontWeight.SemiBold)
+v.Text=b.Title
+v.TextColor3=Color3.fromRGB(255,255,255)
+v.TextSize=16
+v.TextTransparency=0.1
+v.TextXAlignment=Enum.TextXAlignment.Center
+v.BackgroundTransparency=1
+v.AnchorPoint=Vector2.new(0,0.5)
+v.Position=UDim2.fromScale(0.04,0.5)
+v.Size=UDim2.new(1,-80,0,20)
+v.Parent=q
+
+local w=Instance.new"UIPadding"
+w.PaddingLeft=UDim.new(0,45)
+w.Parent=v
+
+
+local x=Instance.new"TextButton"
+x.Name="CloseBtn"
+x.Text="X"
+x.FontFace=Font.new("rbxasset://fonts/families/SourceSansPro.json",Enum.FontWeight.Bold)
+x.TextColor3=Color3.fromRGB(255,255,255)
+x.TextScaled=true
+x.BackgroundTransparency=1
+x.AnchorPoint=Vector2.new(1,0.5)
+x.Position=UDim2.new(1,0,0.5,0)
+x.Size=UDim2.fromOffset(15,15)
+x.Parent=q
+
+
+local y=Instance.new"Frame"
+y.Name="Content"
+y.BackgroundTransparency=1
+y.Position=UDim2.fromOffset(0,50)
+y.Size=UDim2.new(1,0,1,-50)
+y.Parent=n
+
+local z=Instance.new"UIPadding"
+z.PaddingBottom=UDim.new(0,25)
+z.PaddingLeft=UDim.new(0,25)
+z.PaddingRight=UDim.new(0,25)
+z.PaddingTop=UDim.new(0,20)
+z.Parent=y
+
+local A=Instance.new"UIListLayout"
+A.Padding=UDim.new(0,10)
+A.SortOrder=Enum.SortOrder.LayoutOrder
+A.Parent=y
+
+
+local B=Instance.new"TextLabel"
+B.Name="GameInfo"
+B.FontFace=Font.new("rbxassetid://12187365364",Enum.FontWeight.Medium)
+B.Text="Game: "..d.name
+B.TextColor3=Color3.fromRGB(168,85,247)
+B.TextSize=12
+B.TextTransparency=0.3
+B.TextXAlignment=Enum.TextXAlignment.Center
+B.BackgroundTransparency=1
+B.Size=UDim2.new(1,0,0,16)
+B.LayoutOrder=-1
+B.Parent=y
+
+
+local C=Instance.new"TextLabel"
+C.Name="Description"
+C.FontFace=Font.new"rbxassetid://12187365364"
+C.Text=b.Description
+C.TextColor3=Color3.fromRGB(255,255,255)
+C.TextSize=12
+C.TextTransparency=0.5
+C.TextXAlignment=Enum.TextXAlignment.Center
+C.TextWrapped=true
+C.BackgroundTransparency=1
+C.Size=UDim2.new(1,0,0,16)
+C.Parent=y
+
+
+local D=Instance.new"TextBox"
+D.Name="KeyInput"
+D.FontFace=Font.new"rbxassetid://12187365364"
+D.PlaceholderText="Paste your key here..."
+D.PlaceholderColor3=Color3.fromRGB(255,255,255)
+D.Text=""
+D.TextColor3=Color3.fromRGB(255,255,255)
+D.TextSize=13
+D.TextTransparency=0.1
+D.BackgroundColor3=Color3.fromRGB(255,255,255)
+D.BackgroundTransparency=0.95
+D.BorderSizePixel=0
+D.Size=UDim2.new(1,0,0,38)
+D.ClearTextOnFocus=false
+D.LayoutOrder=1
+D.Parent=y
+
+local E=Instance.new"UICorner"
+E.CornerRadius=UDim.new(0,6)
+E.Parent=D
+
+local F=Instance.new"UIStroke"
+F.ApplyStrokeMode=Enum.ApplyStrokeMode.Border
+F.Color=Color3.fromRGB(255,255,255)
+F.Transparency=0.9
+F.Parent=D
+
+local G=Instance.new"UIPadding"
+G.PaddingLeft=UDim.new(0,12)
+G.PaddingRight=UDim.new(0,12)
+G.Parent=D
+
+
+local H=Instance.new"TextButton"
+H.Name="SubmitBtn"
+H.Text=""
+H.FontFace=Font.new("rbxassetid://12187365364",Enum.FontWeight.Medium)
+H.RichText=true
+H.TextColor3=Color3.fromRGB(255,255,255)
+H.TextSize=13
+H.TextTransparency=0.1
+H.BackgroundColor3=Color3.fromRGB(255,255,255)
+H.BackgroundTransparency=0.95
+H.BorderSizePixel=0
+H.Size=UDim2.new(1,0,0,38)
+H.AutoButtonColor=false
+H.LayoutOrder=2
+H.Parent=y
+
+local I=Instance.new"UICorner"
+I.CornerRadius=UDim.new(0,6)
+I.Parent=H
+
+local J=Instance.new"UIStroke"
+J.ApplyStrokeMode=Enum.ApplyStrokeMode.Border
+J.Color=Color3.fromRGB(255,255,255)
+J.Transparency=0.9
+J.Parent=H
+
+local K=Instance.new"TextLabel"
+K.Name="SubmitBtnText"
+K.Text="Verify Key"
+K.FontFace=Font.new("rbxassetid://12187365364",Enum.FontWeight.Medium)
+K.RichText=true
+K.TextColor3=Color3.fromRGB(255,255,255)
+K.TextSize=13
+K.BackgroundTransparency=1
+K.Size=UDim2.new(1,0,1,0)
+K.Parent=H
+
+local L=Instance.new"UIGradient"
+L.Color=ColorSequence.new{
+ColorSequenceKeypoint.new(0,Color3.fromRGB(168,85,247)),
+ColorSequenceKeypoint.new(1,Color3.fromRGB(124,58,237))
+}
+L.Rotation=45
+L.Parent=K
+
+H.MouseEnter:Connect(function()
+Tween(H,TweenInfo.new(0.2,Enum.EasingStyle.Sine),{BackgroundTransparency=0.9}):Play()
+end)
+H.MouseLeave:Connect(function()
+Tween(H,TweenInfo.new(0.2,Enum.EasingStyle.Sine),{BackgroundTransparency=0.95}):Play()
+end)
+
+
+local M=Instance.new"Frame"
+M.Name="Divider1"
+M.BackgroundColor3=Color3.fromRGB(255,255,255)
+M.BackgroundTransparency=0.9
+M.BorderSizePixel=0
+M.Size=UDim2.new(1,0,0,1)
+M.LayoutOrder=2.5
+M.Parent=y
+
+
+local N=Instance.new"TextButton"
+N.Name="DiscordBtn"
+N.Text=""
+N.BackgroundTransparency=1
+N.BorderSizePixel=0
+N.Size=UDim2.new(1,0,0,20)
+N.AutoButtonColor=false
+N.LayoutOrder=3
+N.Parent=y
+
+local O=Instance.new"TextLabel"
+O.Name="DiscordBtnText"
+O.Text="Need support? Join our Discord"
+O.FontFace=Font.new"rbxassetid://12187365364"
+O.RichText=true
+O.TextColor3=Color3.fromRGB(255,255,255)
+O.TextSize=12
+O.TextTransparency=0.5
+O.BackgroundTransparency=1
+O.Size=UDim2.new(1,0,1,0)
+O.Parent=N
+
+local P=Instance.new"UIGradient"
+P.Color=ColorSequence.new{
+ColorSequenceKeypoint.new(0,Color3.fromRGB(255,255,255)),
+ColorSequenceKeypoint.new(0.6,Color3.fromRGB(255,255,255)),
+ColorSequenceKeypoint.new(0.61,Color3.fromRGB(168,85,247)),
+ColorSequenceKeypoint.new(1,Color3.fromRGB(124,58,237))
+}
+P.Parent=O
+
+
+local Q=Instance.new"Frame"
+Q.Name="Divider2Container"
+Q.BackgroundTransparency=1
+Q.Size=UDim2.new(1,0,0,20)
+Q.LayoutOrder=3.5
+Q.Parent=y
+
+local R=Instance.new"Frame"
+R.Name="Divider2Left"
+R.BackgroundColor3=Color3.fromRGB(255,255,255)
+R.BackgroundTransparency=0.9
+R.BorderSizePixel=0
+R.AnchorPoint=Vector2.new(0,0.5)
+R.Position=UDim2.fromScale(0,0.5)
+R.Size=UDim2.new(0.35,-5,0,1)
+R.Parent=Q
+
+local S=Instance.new"TextLabel"
+S.Name="Divider2Text"
+S.Text="Get Key"
+S.FontFace=Font.new("rbxassetid://12187365364",Enum.FontWeight.Medium)
+S.TextColor3=Color3.fromRGB(255,255,255)
+S.TextSize=12
+S.TextTransparency=0.5
+S.BackgroundTransparency=1
+S.AnchorPoint=Vector2.new(0.5,0.5)
+S.Position=UDim2.fromScale(0.5,0.5)
+S.Size=UDim2.fromOffset(60,20)
+S.Parent=Q
+
+local T=Instance.new"Frame"
+T.Name="Divider2Right"
+T.BackgroundColor3=Color3.fromRGB(255,255,255)
+T.BackgroundTransparency=0.9
+T.BorderSizePixel=0
+T.AnchorPoint=Vector2.new(1,0.5)
+T.Position=UDim2.fromScale(1,0.5)
+T.Size=UDim2.new(0.35,-5,0,1)
+T.Parent=Q
+
+
+local U=Instance.new"Frame"
+U.Name="GetKeyContainer"
+U.BackgroundTransparency=1
+U.Size=UDim2.new(1,0,0,38)
+U.LayoutOrder=4
+U.Parent=y
+
+local V=Instance.new"UIListLayout"
+V.Padding=UDim.new(0,8)
+V.FillDirection=Enum.FillDirection.Horizontal
+V.SortOrder=Enum.SortOrder.LayoutOrder
+V.Parent=U
+
+
+for W,X in ipairs(b.GetKeyButtons)do
+local Y=Instance.new"TextButton"
+Y.Name="GetKeyBtn"..W
+Y.Text=""
+Y.FontFace=Font.new("rbxassetid://12187365364",Enum.FontWeight.Medium)
+Y.TextColor3=Color3.fromRGB(255,255,255)
+Y.TextSize=12
+Y.TextTransparency=0.1
+Y.BackgroundColor3=Color3.fromRGB(255,255,255)
+Y.BackgroundTransparency=0.95
+Y.BorderSizePixel=0
+Y.Size=UDim2.new(0.32,0,1,0)
+Y.AutoButtonColor=false
+Y.Parent=U
+
+local Z=Instance.new"UICorner"
+Z.CornerRadius=UDim.new(0,6)
+Z.Parent=Y
+
+local _=Instance.new"UIStroke"
+_.ApplyStrokeMode=Enum.ApplyStrokeMode.Border
+_.Color=Color3.fromRGB(255,255,255)
+_.Transparency=0.9
+_.Parent=Y
+
+local aa=Instance.new"TextLabel"
+aa.Name="GetKeyBtnText"
+aa.Text=X.Icon.." "..X.Name
+aa.FontFace=Font.new("rbxassetid://12187365364",Enum.FontWeight.Medium)
+aa.RichText=true
+aa.TextColor3=Color3.fromRGB(255,255,255)
+aa.TextSize=12
+aa.BackgroundTransparency=1
+aa.Size=UDim2.new(1,0,1,0)
+aa.Parent=Y
+
+local ab=Instance.new"UIGradient"
+ab.Color=ColorSequence.new{
+ColorSequenceKeypoint.new(0,Color3.fromRGB(168,85,247)),
+ColorSequenceKeypoint.new(1,Color3.fromRGB(124,58,237))
+}
+ab.Rotation=45
+ab.Parent=aa
+
+Y.MouseEnter:Connect(function()
+Tween(Y,TweenInfo.new(0.2,Enum.EasingStyle.Sine),{BackgroundTransparency=0.9}):Play()
+end)
+Y.MouseLeave:Connect(function()
+Tween(Y,TweenInfo.new(0.2,Enum.EasingStyle.Sine),{BackgroundTransparency=0.95}):Play()
+end)
+
+Y.MouseButton1Click:Connect(function()
+setclipboard(X.Link)
+C.Text=X.Name.." link copied!"
+C.TextColor3=Color3.fromRGB(100,255,100)
+task.wait(2)
+C.Text=b.Description
+C.TextColor3=Color3.fromRGB(255,255,255)
+end)
+end
+
+
+
+
+local function UpdateStatus(aa,ab)
+C.Text=aa
+C.TextColor3=ab
+end
+
+local function ButtonHover(aa,ab,W)
+local X=aa:FindFirstChild"DiscordBtnText"
+if X then
+aa.MouseEnter:Connect(function()
+Tween(X,TweenInfo.new(0.2,Enum.EasingStyle.Sine),{TextTransparency=W}):Play()
+end)
+aa.MouseLeave:Connect(function()
+Tween(X,TweenInfo.new(0.2,Enum.EasingStyle.Sine),{TextTransparency=ab}):Play()
+end)
+end
+end
+
+local aa=false
+
+local function VerifyKey()
+
+if aa then
+return
+end
+
+local ab=D.Text:gsub("%s+","")
+if ab==""then
+UpdateStatus("Please enter a key!",Color3.fromRGB(255,100,100))
+task.wait(2)
+UpdateStatus(b.Description,Color3.fromRGB(255,255,255))
+return
+end
+
+aa=true
+UpdateStatus("Checking key...",Color3.fromRGB(255,200,100))
+K.Text="Checking..."
+
+task.spawn(function()
+local W,X=checkKey(ab)
+
+if W then
+local Y=detectVersion()
+UpdateStatus("Key valid! Loading...",Color3.fromRGB(100,255,100))
+
+getgenv().script_key=ab
+getgenv().HoN_Version=Y
+
+
+if writefile then
+pcall(function()
+writefile(g,ab)
+end)
+end
+
+local Z=Y=="normal"and"PREMIUM"or("PREMIUM | "..Y:upper())
+
+game:GetService"StarterGui":SetCore("SendNotification",{
+Title=b.Title;
+Text=d.name.." | "..Z.." loaded!";
+Icon="rbxassetid://123156553209294";
+Duration=5;
+})
+
+m:Destroy()
+loadScript()
+else
+local Y={
+KEY_HWID_LOCKED="Key locked to different device",
+KEY_INCORRECT="Invalid key",
+KEY_EXPIRED="Key expired",
+KEY_BANNED="Key banned",
+KEY_INVALID="Invalid key format",
+SCRIPT_ID_INCORRECT="Script ID error",
+SCRIPT_ID_INVALID="Invalid script ID",
+INVALID_EXECUTOR="Unsupported executor",
+INVALID_VERSION="Version not supported"
+}
+
+local Z=Y[X.code]or("Error: "..tostring(X.message))
+UpdateStatus(Z,Color3.fromRGB(255,100,100))
+K.Text="Verify Key"
+aa=false
+task.wait(2)
+UpdateStatus(b.Description,Color3.fromRGB(255,255,255))
+end
+end)
+end
+
+ButtonHover(N,0.5,0.3)
+
+
+
+
+x.MouseButton1Click:Connect(function()
+m:Destroy()
+end)
+
+N.MouseButton1Click:Connect(function()
+setclipboard(b.DiscordLink)
+UpdateStatus("Discord link copied!",Color3.fromRGB(100,255,100))
+task.wait(2)
+UpdateStatus(b.Description,Color3.fromRGB(255,255,255))
+end)
+
+H.MouseButton1Click:Connect(function()
+VerifyKey()
+end)
+
+D.FocusLost:Connect(function(ab)
+if ab then
+VerifyKey()
+end
+end)
+
+
+
+
+local ab,W,X,Y
+
+q.InputBegan:Connect(function(Z)
+if Z.UserInputType==Enum.UserInputType.MouseButton1 then
+ab=true
+X=Z.Position
+Y=n.Position
+
+Z.Changed:Connect(function()
+if Z.UserInputState==Enum.UserInputState.End then
+ab=false
+end
+end)
+end
+end)
+
+q.InputChanged:Connect(function(Z)
+if Z.UserInputType==Enum.UserInputType.MouseMovement then
+W=Z
+end
+end)
+
+j.InputChanged:Connect(function(Z)
+if Z==W and ab then
+local _=Z.Position-X
+n.Position=UDim2.new(Y.X.Scale,Y.X.Offset+_.X,Y.Y.Scale,Y.Y.Offset+_.Y)
+end
+end)
+
+
+
+
+game:GetService"StarterGui":SetCore("SendNotification",{
+Title=b.Title;
+Text="Key system loaded for "..d.name;
+Icon="rbxassetid://123156553209294";
+Duration=3;
+})
